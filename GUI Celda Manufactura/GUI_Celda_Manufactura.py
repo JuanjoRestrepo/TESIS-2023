@@ -43,7 +43,7 @@ class Application(tk.Frame):
 
     def delete_order(self):
         # Lógica para eliminar una orden aquí
-        print("Orden Eliminada")
+        self.delete_order_screen()
 
 
     def modify_order(self):
@@ -112,7 +112,50 @@ class Application(tk.Frame):
         # Botón para crear la orden
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
         create_order_button.pack(side="bottom", pady=10)
-        
+    
+
+
+    def delete_order_screen(self):
+        self.master.withdraw()
+        delete_order_window = tk.Toplevel(self)
+        # Centrar la ventana de eliminar ordenes
+        width = delete_order_window.winfo_screenwidth()
+        height = delete_order_window.winfo_screenheight()
+        x = (width - 600) // 2
+        y = (height - 400) // 2
+        delete_order_window.geometry("600x400+{}+{}".format(x, y))
+        delete_order_window.title("ELIMINAR ORDEN")
+
+        # Frame para seleccionar la orden a eliminar
+        order_frame = tk.Frame(delete_order_window)
+        order_frame.pack(side="top", pady=10)
+        order_label = tk.Label(order_frame, text="Seleccione la Orden a Eliminar:")
+        order_label.pack(side="left")
+        order_combobox = ttk.Combobox(order_frame, values=[str(i) for i in range(1, len(self.orders) + 1)])
+        order_combobox.pack(side="left")
+
+        # Regresar
+        back_button = tk.Button(delete_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
+        back_button.pack(side="bottom", pady=10)
+
+        def delete_order():
+            order_index = int(order_combobox.get()) - 1
+            if order_index < 0 or order_index >= len(self.orders):
+                print("Error: Seleccione una orden válida")
+            else:
+                # Eliminar la orden de la lista de órdenes
+                del self.orders[order_index]
+
+                # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
+                print("Orden Eliminada: Orden {}".format(order_index+1))
+                delete_order_window.destroy()
+                self.go_to_main_screen()
+
+        # Botón para eliminar la orden
+        delete_order_button = tk.Button(delete_order_window, text="Eliminar Orden", command=delete_order)
+        delete_order_button.pack(side="bottom", pady=10)
+
+
 
     def print_orders(self):
         print("\n===== Ordenes =====")
@@ -131,10 +174,4 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = Application(master=root)
     app.mainloop()
-
-
-
-
-
-
 
