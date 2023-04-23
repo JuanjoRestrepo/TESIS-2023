@@ -1,10 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
 
+class Order:
+    def __init__(self, pieces, material, piece):
+        self.pieces = pieces
+        self.material = material
+        self.piece = piece
+
+
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
+        self.orders = [] # Definición de la lista de órdenes vacía
         self.master.geometry("600x400")
         width = self.master.winfo_screenwidth()
         height = self.master.winfo_screenheight()
@@ -25,20 +33,23 @@ class Application(tk.Frame):
         self.modify_order_button = tk.Button(self, text="Modificar Orden", command=self.modify_order)
         self.modify_order_button.pack(side="top")
 
+        self.print_orders_button = tk.Button(self, text="Ver órdenes", command=self.print_orders)
+        self.print_orders_button.pack(side="top")
+
     def create_order(self):
         # Lógica para crear una orden aquí
         self.create_order_screen()
-        print("Orden Creada")
+        
 
     def delete_order(self):
         # Lógica para eliminar una orden aquí
         print("Orden Eliminada")
-        pass
+
 
     def modify_order(self):
         # Lógica para modificar una orden aquí
         print("Orden Modificada")
-        pass
+
 
 
     # Screens/Pantallas
@@ -80,6 +91,34 @@ class Application(tk.Frame):
         # Regresar
         back_button = tk.Button(create_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
         back_button.pack(side="bottom", pady=10)
+
+
+        def create_order():
+            pieces = pieces_entry.get()
+            material = material_combobox.get()
+            piece = piece_combobox.get()
+
+            # Crear una instancia de la clase Order con los datos ingresados
+            order = Order(pieces, material, piece)
+
+            # Agregar la orden a la lista de órdenes
+            self.orders.append(order)
+
+            # Cerrar la ventana de Crear Orden y volver a la pantalla principal
+            print("Orden Creada")
+            create_order_window.destroy()
+            self.go_to_main_screen()
+        
+        # Botón para crear la orden
+        create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
+        create_order_button.pack(side="bottom", pady=10)
+        
+
+    def print_orders(self):
+        for order in self.orders:
+            print("Piezas: {}, Material: {}, Tipo de Pieza: {}".format(order.pieces, order.material, order.piece))
+    
+
 
     def go_to_main_screen(self):
         self.master.deiconify()  # Mostrar la pantalla principal
