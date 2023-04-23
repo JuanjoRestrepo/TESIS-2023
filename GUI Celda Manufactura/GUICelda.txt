@@ -1,0 +1,68 @@
+import tkinter as tk
+
+# Creamos la Ventana Principal
+root = tk.Tk()
+
+# Tamaño de la ventana
+root.geometry("600x400")
+
+# Crear label widget
+label = tk.Label(root, text="Celda de Manufactura")
+
+# Crear frame para la ventana de Crear Orden
+crearFrame = tk.Frame(root)
+
+
+
+
+ordenLabel = tk.Label(crearFrame, text="Detalles Orden:")
+ordenEntry = tk.Entry(crearFrame)
+
+# Pack the label and entry widgets onto the frame
+ordenLabel.pack()
+ordenEntry.pack()
+
+def crearVentanaOrden():
+    # Ocultar los botones de la pantalla principal
+    label.pack_forget()
+    BotonCrear.pack_forget()
+    BotonEliminar.pack_forget()
+    BotonModificar.pack_forget()
+
+    # Mostrar la pantalla de Crear Orden
+    crearFrame.pack()
+
+def crearOrden():
+    print(f"Nueva Orden Creada: {ordenEntry.get()}")
+
+     # Borrar el campo de Entrada
+    ordenEntry.delete(0, tk.END)
+
+    # Devolverse a la ventana principal
+    crearFrame.pack_forget()
+    label.pack()
+    BotonCrear.pack()
+    BotonEliminar.pack()
+    BotonModificar.pack()
+
+
+# Crear Botones para Crear, Eliminar y Modificar Orden
+BotonCrear = tk.Button(root, text="Crear Orden", command=crearVentanaOrden)
+BotonEliminar = tk.Button(root, text="Eliminar Orden")
+BotonModificar = tk.Button(root, text="Modificar Orden")
+
+# Coloca los Botones en la Ventana
+BotonCrear.pack()
+BotonEliminar.pack()
+BotonModificar.pack()
+
+
+
+# Creamos el boton de "Crear Orden" 
+botonCrearOrden = tk.Button(crearFrame, text="Crear Orden", command=crearOrden)
+
+# Pack the "Create Order" button onto the create frame
+botonCrearOrden.pack()
+
+# Start the main event loop
+root.mainloop()
