@@ -115,6 +115,7 @@ class Application(tk.Frame):
         
 
     def print_orders(self):
+        print("\n===== Ordenes =====")
         for order in self.orders:
             print("Piezas: {}, Material: {}, Tipo de Pieza: {}".format(order.pieces, order.material, order.piece))
     
