@@ -153,19 +153,44 @@ class Application(tk.Frame):
         back_button = tk.Button(delete_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
         back_button.pack(side="bottom", pady=10)
 
-        def delete_order():
-            order_index = int(order_combobox.get()) - 1
-            if order_index < 0 or order_index >= len(self.orders):
-                print("Error: Seleccione una orden válida")
-                
-            else:
-                # Eliminar la orden de la lista de órdenes
-                del self.orders[order_index]
 
-                # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
-                print("Orden Eliminada: Orden {}".format(order_index+1))
-                delete_order_window.destroy()
-                self.go_to_main_screen()
+        def delete_order():
+            order_index = order_combobox.get()
+            if not order_index:
+                error_message = tk.Toplevel(delete_order_window)
+                
+                # Centrar la ventana de mensaje de eliminar ordenes
+                width = delete_order_window.winfo_screenwidth()
+                height = delete_order_window.winfo_screenheight()
+                x = (width - 200) // 2
+                y = (height - 100) // 2
+                error_message.geometry("200x100+{}+{}".format(x, y))
+                error_message.title("Error")
+                error_label = tk.Label(error_message, text="Debe seleccionar una orden.")
+                error_label.pack(side="top", pady=10)
+                error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
+                error_button.pack(side="bottom", pady=10)
+                return
+            else:
+                order_index = int(order_index) - 1
+                if order_index < 0 or order_index >= len(self.orders):
+                    error_message = tk.Toplevel(delete_order_window)
+                    error_message.geometry("200x100")
+                    error_message.title("Error")
+                    error_label = tk.Label(error_message, text="Seleccione una orden válida.")
+                    error_label.pack(side="top", pady=10)
+                    error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
+                    error_button.pack(side="bottom", pady=10)
+                    return
+
+            # Eliminar la orden de la lista de órdenes
+            del self.orders[order_index]
+
+            # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
+            print("Orden Eliminada: Orden {}".format(order_index+1))
+            delete_order_window.destroy()
+            self.go_to_main_screen()
+
 
         # Botón para eliminar la orden
         delete_order_button = tk.Button(delete_order_window, text="Eliminar Orden", command=delete_order)
