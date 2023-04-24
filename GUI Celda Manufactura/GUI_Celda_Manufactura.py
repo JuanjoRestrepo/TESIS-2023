@@ -285,34 +285,6 @@ class Application(tk.Frame):
         pass
 
 
-
-
-
-    def show_order_created(self, order):
-        order_created_window = tk.Toplevel(self)
-        # Centrar la ventana de orden creada
-        width = order_created_window.winfo_screenwidth()
-        height = order_created_window.winfo_screenheight()
-        x = (width - 400) // 2
-        y = (height - 300) // 2
-        order_created_window.geometry("400x300+{}+{}".format(x, y))
-        order_created_window.title("Orden Creada")
-
-        # Mostrar los detalles de la orden creada
-        order_id_label = tk.Label(order_created_window, text="ID de Orden: {}".format(order.id))
-        order_id_label.pack()
-        pieces_label = tk.Label(order_created_window, text="Cantidad de Piezas: {}".format(order.pieces))
-        pieces_label.pack()
-        material_label = tk.Label(order_created_window, text="Tipo de Material: {}".format(order.material))
-        material_label.pack()
-        piece_label = tk.Label(order_created_window, text="Tipo de Pieza: {}".format(order.piece))
-        piece_label.pack()
-
-        # Botón para cerrar la ventana de orden creada y volver a la pantalla principal
-        close_button = tk.Button(order_created_window, text="Aceptar", command=self.go_to_main_screen)
-        close_button.pack(side="bottom", pady=10)
-
-
     def show_order_details(order):
         # Crear una ventana para mostrar los detalles de la orden
         order_details_window = tk.Toplevel()
