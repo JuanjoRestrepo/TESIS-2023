@@ -98,6 +98,22 @@ class Application(tk.Frame):
             material = material_combobox.get()
             piece = piece_combobox.get()
 
+            # Validación de campos de entrada
+            if not pieces or not material or not piece:
+                error_message = tk.Toplevel(create_order_window)
+                # Centrar la ventana de error
+                width = error_message.winfo_screenwidth()
+                height = error_message.winfo_screenheight()
+                x = (width - 200) // 2
+                y = (height - 100) // 2
+                error_message.geometry("200x100+{}+{}".format(x, y))
+                error_message.title("Error")
+                error_label = tk.Label(error_message, text="Debe llenar todos los campos.")
+                error_label.pack(side="top", pady=10)
+                error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
+                error_button.pack(side="bottom", pady=10)
+                return
+
             # Crear una instancia de la clase Order con los datos ingresados
             order = Order(pieces, material, piece)
 
@@ -113,7 +129,6 @@ class Application(tk.Frame):
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
         create_order_button.pack(side="bottom", pady=10)
     
-
 
     def delete_order_screen(self):
         self.master.withdraw()
@@ -142,6 +157,7 @@ class Application(tk.Frame):
             order_index = int(order_combobox.get()) - 1
             if order_index < 0 or order_index >= len(self.orders):
                 print("Error: Seleccione una orden válida")
+                
             else:
                 # Eliminar la orden de la lista de órdenes
                 del self.orders[order_index]
@@ -155,6 +171,8 @@ class Application(tk.Frame):
         delete_order_button = tk.Button(delete_order_window, text="Eliminar Orden", command=delete_order)
         delete_order_button.pack(side="bottom", pady=10)
 
+    def modify_order_screen():
+        pass
 
 
     def print_orders(self):
