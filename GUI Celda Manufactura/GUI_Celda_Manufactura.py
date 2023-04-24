@@ -23,6 +23,7 @@ class Application(tk.Frame):
         self.master = master
         self.orders = [] # Definición de la lista de órdenes vacía
         self.master.geometry("600x400")
+
         width = self.master.winfo_screenwidth()
         height = self.master.winfo_screenheight()
         x = (width - 600) // 2
@@ -31,6 +32,7 @@ class Application(tk.Frame):
         self.master.title("Celda de Manufactura")
         self.pack()
         self.create_widgets()
+
 
     def create_widgets(self):
         self.create_order_button = tk.Button(self, text="Crear Orden", command=self.create_order)
@@ -65,14 +67,60 @@ class Application(tk.Frame):
         for order in self.orders:
             print(order.order_id)
         
-        # Obtener la orden seleccionada
-        selected_order = self.orders_listbox.curselection()
-        if not selected_order:
-            return
+        # Crear una ventana para mostrar las órdenes
+        orders_window = tk.Toplevel()
+        orders_window.title("Órdenes")
+        
+        # Centrar la ventana
+        width = orders_window.winfo_screenwidth()
+        height = orders_window.winfo_screenheight()
+        x = (width - 400) // 2
+        y = (height - 200) // 2
+        orders_window.geometry("400x200+{}+{}".format(x, y))
 
-        order = self.orders[selected_order[0]]
-        # Mostrar los detalles de la orden en una ventana
-        self.show_order_details(order)
+        # Mostrar el encabezado de la tabla de órdenes
+        header_frame = tk.Frame(orders_window)
+        header_frame.pack(side="top", fill="x", pady=10)
+
+        order_id_label = tk.Label(header_frame, text="ID de la Orden", width=15)
+        order_id_label.pack(side="left")
+
+        date_created_label = tk.Label(header_frame, text="Fecha de Creación", width=20)
+        date_created_label.pack(side="left")
+
+        pieces_label = tk.Label(header_frame, text="Cantidad de Piezas", width=20)
+        pieces_label.pack(side="left")
+
+        material_label = tk.Label(header_frame, text="Tipo de Material", width=20)
+        material_label.pack(side="left")
+
+        piece_label = tk.Label(header_frame, text="Tipo de Pieza", width=20)
+        piece_label.pack(side="left")
+
+        # Mostrar cada orden en una fila de la tabla
+        for order in self.orders:
+            order_frame = tk.Frame(orders_window)
+            order_frame.pack(side="top", fill="x", pady=5)
+
+            order_id_label = tk.Label(order_frame, text=order.order_id, width=15)
+            order_id_label.pack(side="left")
+
+            date_created_label = tk.Label(order_frame, text=order.date_created, width=20)
+            date_created_label.pack(side="left")
+
+            pieces_label = tk.Label(order_frame, text=order.pieces, width=20)
+            pieces_label.pack(side="left")
+
+            material_label = tk.Label(order_frame, text=order.material, width=20)
+            material_label.pack(side="left")
+
+            piece_label = tk.Label(order_frame, text=order.piece, width=20)
+            piece_label.pack(side="left")
+
+        # Botón para cerrar la ventana de órdenes
+        close_button = tk.Button(orders_window, text="Cerrar", command=orders_window.destroy)
+        close_button.pack(side="bottom", pady=10)
+        
 
 
     # Screens/Pantallas
@@ -159,13 +207,10 @@ class Application(tk.Frame):
                 return
 
 
-
             # Crear el ID de la orden y la fecha de creación
             date_created = datetime.now()
             order_id = "{}P{}_{}_{}_{}_C{}".format(material[0], piece[-1], date_created.year, date_created.day, date_created.month, pieces)
 
-            # Modificar el formato de la fecha
-            #date_created_str = date_created.strftime("%Y_%m_%d")
 
             # Crear una instancia de la clase Order con los datos ingresados
             order = Order(order_id, pieces, material, piece, date_created)
@@ -188,6 +233,7 @@ class Application(tk.Frame):
             # Mostrar la fecha de creación de la orden
             date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created))
             date_created_label.pack(side="top", pady=10)
+
 
             # Mostrar la cantidad de piezas de la orden
             pieces_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.pieces))
@@ -293,17 +339,18 @@ class Application(tk.Frame):
         # Centrar la ventana
         width = order_details_window.winfo_screenwidth()
         height = order_details_window.winfo_screenheight()
-        x = (width - 400) // 2
-        y = (height - 200) // 2
-        order_details_window.geometry("400x200+{}+{}".format(x, y))
+        x = (width - 450) // 2
+        y = (height - 250) // 2
+        order_details_window.geometry("450x250+{}+{}".format(x, y))
 
         # Mostrar el ID de la orden
         order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
         order_id_label.pack(side="top", pady=10)
 
         # Mostrar la fecha de creación de la orden
-        date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created))
+        date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created.strftime("%Y-%m-%d")))
         date_created_label.pack(side="top", pady=10)
+
 
         # Mostrar la cantidad de piezas de la orden
         pieces_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.pieces))
