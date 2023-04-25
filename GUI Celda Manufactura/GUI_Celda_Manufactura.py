@@ -253,10 +253,6 @@ class Application(tk.Frame):
             close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
             close_button.pack(side="bottom", pady=10)
 
-
-            #print("Orden Creada")
-            #create_order_window.destroy()
-            #self.go_to_main_screen()
         
         # Botón para crear la orden
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
