@@ -251,6 +251,7 @@ class Application(tk.Frame):
         # Regresar
         back_button = tk.Button(delete_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
         back_button.pack(side="bottom", pady=10)
+        
         def delete_order():
             order_index = order_combobox.get()
             if not order_index:
@@ -335,7 +336,7 @@ class Application(tk.Frame):
     def go_to_main_screen(self):
         self.master.deiconify()  # Mostrar la pantalla principal
 
-        
+
 if __name__ == '__main__':
     root = tk.Tk()
     app = Application(master=root)
