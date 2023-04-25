@@ -21,7 +21,9 @@ class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.orders = [] # Definición de la lista de órdenes vacía
+
+        # Definición de la lista de órdenes vacía
+        self.orders = [] 
         self.master.geometry("600x400")
 
         width = self.master.winfo_screenwidth()
