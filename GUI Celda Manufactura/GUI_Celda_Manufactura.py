@@ -17,6 +17,7 @@ class Order:
 
 
 class Application(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
@@ -45,6 +46,7 @@ class Application(tk.Frame):
 
         self.print_orders_button = tk.Button(self, text="Ver órdenes", command=self.print_orders)
         self.print_orders_button.pack(side="top")
+
 
     def create_order(self):
         # Lógica para crear una orden aquí
@@ -208,9 +210,8 @@ class Application(tk.Frame):
 
             # Crear el ID de la orden y la fecha de creación
             date_created = datetime.now()
-            #Convertimos la fecha 
-            # de formato <class 'datetime.datetime'>
-            # a formato <string>
+            
+            #Convertimos la fecha de formato <class 'datetime.datetime'> a formato <string>
             date_string = date_created.strftime("%Y-%m-%d")
             order_id = "{}P{}_{}_C{}".format(material[0], piece[-1], date_string, pieces)
 
@@ -228,6 +229,7 @@ class Application(tk.Frame):
             y = (height - 250) // 2
             order_details_window.title("Detalles de la Orden")
             order_details_window.geometry("400x250+{}+{}".format(x, y))
+
             # Mostrar el ID de la orden
             order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
             order_id_label.pack(side="top", pady=10)
@@ -235,7 +237,6 @@ class Application(tk.Frame):
             # Mostrar la fecha de creación de la orden
             date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created.strftime("%Y-%m-%d")))
             date_created_label.pack(side="top", pady=10)
-
 
             # Mostrar la cantidad de piezas de la orden
             pieces_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.pieces))
@@ -367,7 +368,7 @@ class Application(tk.Frame):
         close_button.pack(side="bottom", pady=10)
 
     
-
+    
     def go_to_main_screen(self):
         self.master.deiconify()  # Mostrar la pantalla principal
 
