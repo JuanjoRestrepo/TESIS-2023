@@ -245,7 +245,7 @@ class Application(tk.Frame):
         order_frame.pack(side="top", pady=10)
         order_label = tk.Label(order_frame, text="Seleccione la Orden a Eliminar:")
         order_label.pack(side="left")
-        order_combobox = ttk.Combobox(order_frame, values=[str(i) for i in range(1, len(self.orders) + 1)])
+        order_combobox = ttk.Combobox(order_frame, values=[order.order_id for order in self.orders])
         order_combobox.pack(side="left")
         
         # Regresar
@@ -253,8 +253,8 @@ class Application(tk.Frame):
         back_button.pack(side="bottom", pady=10)
         
         def delete_order():
-            order_index = order_combobox.get()
-            if not order_index:
+            selected_order = self.orders[order_combobox.current()]
+            if not selected_order:
                 error_message = tk.Toplevel(delete_order_window)
                 
                 # Centrar la ventana de mensaje de eliminar ordenes
@@ -270,7 +270,9 @@ class Application(tk.Frame):
                 error_button.pack(side="bottom", pady=10)
                 return
             else:
-                order_index = int(order_index) - 1
+                #order_index = int(order_index) - 1
+                selected_order_id = selected_order.order_id
+                '''
                 if order_index < 0 or order_index >= len(self.orders):
                     error_message = tk.Toplevel(delete_order_window)
                     error_message.geometry("200x100")
@@ -279,13 +281,14 @@ class Application(tk.Frame):
                     error_label.pack(side="top", pady=10)
                     error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
                     error_button.pack(side="bottom", pady=10)
-                    return
+                    return'''
             
             # Eliminar la orden de la lista de órdenes
-            del self.orders[order_index]
+            #del self.orders[order_index]
+            self.orders.remove(selected_order)
             
             # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
-            print("Orden Eliminada: Orden {}".format(order_index+1))
+            print("Orden Eliminada: Orden {}".format(selected_order_id))
             delete_order_window.destroy()
             self.go_to_main_screen()
         
