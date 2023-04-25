@@ -1,6 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
 class Order:
     def __init__(self, order_id, pieces, material, piece, date_created):
         self.order_id = order_id
@@ -11,7 +16,14 @@ class Order:
     
     def __str__(self):
         return f"ID de Orden: {self.order_id}"
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
 class Application(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
@@ -44,9 +56,17 @@ class Application(tk.Frame):
     def delete_order(self):
         # Lógica para eliminar una orden aquí
         self.delete_order_screen()
+<<<<<<< HEAD
     def modify_order(self):
         # Lógica para modificar una orden aquí
         print("Orden Modificada")
+=======
+
+    def modify_order(self):
+        # Lógica para modificar una orden aquí
+        print("Orden Modificada")
+
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
     def print_orders(self):
         print("\n===== Ordenes =====")
         for order in self.orders:
@@ -128,6 +148,10 @@ class Application(tk.Frame):
         # Regresar
         back_button = tk.Button(create_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
         back_button.pack(side="bottom", pady=10)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
         def create_order():
             pieces = pieces_entry.get()
             material = material_combobox.get()
@@ -166,16 +190,30 @@ class Application(tk.Frame):
                 error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
                 error_button.pack(side="bottom", pady=10)
                 return
+<<<<<<< HEAD
+=======
+            
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
             # Crear el ID de la orden y la fecha de creación
             date_created = datetime.now()
             
             #Convertimos la fecha de formato <class 'datetime.datetime'> a formato <string>
             date_string = date_created.strftime("%Y-%m-%d")
             order_id = "{}P{}_{}_C{}".format(material[0], piece[-1], date_string, pieces)
+<<<<<<< HEAD
             # Crear una instancia de la clase Order con los datos ingresados
             order = Order(order_id, pieces, material, piece, date_created)
             # Agregar la orden a la lista de órdenes
             self.orders.append(order)
+=======
+
+            # Crear una instancia de la clase Order con los datos ingresados
+            order = Order(order_id, pieces, material, piece, date_created)
+
+            # Agregar la orden a la lista de órdenes
+            self.orders.append(order)
+
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
             # Cerrar la ventana de Crear Orde con sus detalles y volver a la pantalla principal
             order_details_window = tk.Toplevel(create_order_window)
             width = order_details_window.winfo_screenwidth()
@@ -184,6 +222,7 @@ class Application(tk.Frame):
             y = (height - 250) // 2
             order_details_window.title("Detalles de la Orden")
             order_details_window.geometry("400x250+{}+{}".format(x, y))
+<<<<<<< HEAD
             # Mostrar el ID de la orden
             order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
             order_id_label.pack(side="top", pady=10)
@@ -199,6 +238,29 @@ class Application(tk.Frame):
             # Mostrar el tipo de pieza de la orden
             piece_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order.piece))
             piece_label.pack(side="top", pady=10)
+=======
+            
+            # Mostrar el ID de la orden
+            order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
+            order_id_label.pack(side="top", pady=10)
+            
+            # Mostrar la fecha de creación de la orden
+            date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created.strftime("%Y-%m-%d")))
+            date_created_label.pack(side="top", pady=10)
+            
+            # Mostrar la cantidad de piezas de la orden
+            pieces_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.pieces))
+            pieces_label.pack(side="top", pady=10)
+            
+            # Mostrar el tipo de material de la orden
+            material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order.material))
+            material_label.pack(side="top", pady=10)
+            
+            # Mostrar el tipo de pieza de la orden
+            piece_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order.piece))
+            piece_label.pack(side="top", pady=10)
+            
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
             # Botón para cerrar la ventana de detalles de la orden
             close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
             close_button.pack(side="bottom", pady=10)
@@ -210,6 +272,7 @@ class Application(tk.Frame):
     def delete_order_screen(self):
         self.master.withdraw()
         delete_order_window = tk.Toplevel(self)
+       
         # Centrar la ventana de eliminar ordenes
         width = delete_order_window.winfo_screenwidth()
         height = delete_order_window.winfo_screenheight()
@@ -217,19 +280,31 @@ class Application(tk.Frame):
         y = (height - 400) // 2
         delete_order_window.geometry("600x400+{}+{}".format(x, y))
         delete_order_window.title("ELIMINAR ORDEN")
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
         # Frame para seleccionar la orden a eliminar
         order_frame = tk.Frame(delete_order_window)
         order_frame.pack(side="top", pady=10)
         order_label = tk.Label(order_frame, text="Seleccione la Orden a Eliminar:")
         order_label.pack(side="left")
-        order_combobox = ttk.Combobox(order_frame, values=[str(i) for i in range(1, len(self.orders) + 1)])
+        order_combobox = ttk.Combobox(order_frame, values=[order.order_id for order in self.orders])
         order_combobox.pack(side="left")
+<<<<<<< HEAD
         # Regresar
         back_button = tk.Button(delete_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
         back_button.pack(side="bottom", pady=10)
+=======
+        
+        # Regresar
+        back_button = tk.Button(delete_order_window, text="Regresar a pantalla principal", command=self.go_to_main_screen)
+        back_button.pack(side="bottom", pady=10)
+        
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
         def delete_order():
-            order_index = order_combobox.get()
-            if not order_index:
+            selected_order = self.orders[order_combobox.current()]
+            if not selected_order:
                 error_message = tk.Toplevel(delete_order_window)
                 
                 # Centrar la ventana de mensaje de eliminar ordenes
@@ -245,7 +320,9 @@ class Application(tk.Frame):
                 error_button.pack(side="bottom", pady=10)
                 return
             else:
-                order_index = int(order_index) - 1
+                #order_index = int(order_index) - 1
+                selected_order_id = selected_order.order_id
+                '''
                 if order_index < 0 or order_index >= len(self.orders):
                     error_message = tk.Toplevel(delete_order_window)
                     error_message.geometry("200x100")
@@ -254,18 +331,35 @@ class Application(tk.Frame):
                     error_label.pack(side="top", pady=10)
                     error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
                     error_button.pack(side="bottom", pady=10)
+<<<<<<< HEAD
                     return
             # Eliminar la orden de la lista de órdenes
             del self.orders[order_index]
+=======
+                    return'''
+            
+            # Eliminar la orden de la lista de órdenes
+            #del self.orders[order_index]
+            self.orders.remove(selected_order)
+            
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
             # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
-            print("Orden Eliminada: Orden {}".format(order_index+1))
+            print("Orden Eliminada: Orden {}".format(selected_order_id))
             delete_order_window.destroy()
             self.go_to_main_screen()
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
         # Botón para eliminar la orden
         delete_order_button = tk.Button(delete_order_window, text="Eliminar Orden", command=delete_order)
         delete_order_button.pack(side="bottom", pady=10)
     def modify_order_screen():
         pass
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
     def show_order_details(order):
         # Crear una ventana para mostrar los detalles de la orden
         order_details_window = tk.Toplevel()
@@ -277,6 +371,7 @@ class Application(tk.Frame):
         x = (width - 450) // 2
         y = (height - 250) // 2
         order_details_window.geometry("450x250+{}+{}".format(x, y))
+<<<<<<< HEAD
         # Mostrar el ID de la orden
         order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
         order_id_label.pack(side="top", pady=10)
@@ -292,6 +387,29 @@ class Application(tk.Frame):
         # Mostrar el tipo de pieza de la orden
         piece_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order.piece))
         piece_label.pack(side="top", pady=10)
+=======
+        
+        # Mostrar el ID de la orden
+        order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
+        order_id_label.pack(side="top", pady=10)
+        
+        # Mostrar la fecha de creación de la orden
+        date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created.strftime("%Y-%m-%d")))
+        date_created_label.pack(side="top", pady=10)
+        
+        # Mostrar la cantidad de piezas de la orden
+        pieces_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.pieces))
+        pieces_label.pack(side="top", pady=10)
+        
+        # Mostrar el tipo de material de la orden
+        material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order.material))
+        material_label.pack(side="top", pady=10)
+        
+        # Mostrar el tipo de pieza de la orden
+        piece_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order.piece))
+        piece_label.pack(side="top", pady=10)
+        
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
         # Botón para cerrar la ventana de detalles de la orden
         close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
         close_button.pack(side="bottom", pady=10)
@@ -299,7 +417,16 @@ class Application(tk.Frame):
     
     def go_to_main_screen(self):
         self.master.deiconify()  # Mostrar la pantalla principal
+<<<<<<< HEAD
 if __name__ == '__main__':
     root = tk.Tk()
     app = Application(master=root)
     app.mainloop()
+=======
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    app = Application(master=root)
+    app.mainloop()
+>>>>>>> 1f3ffcb616ed5ac0dc0ffcde7085e4d73eb3f349
