@@ -1,11 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
-from datetime import datetime
+#import Graph
+from PIL import ImageTk,Image
 
 class Order:
-    def __init__(self, order_id, pieces, material, piece, date_created):
+    def __init__(self, order_id, amount, material, piece, date_created):
         self.order_id = order_id
-        self.pieces = pieces
+        self.amount = amount
         self.material = material
         self.piece = piece
         self.date_created = date_created
@@ -13,34 +14,51 @@ class Order:
     def __str__(self):
         return f"ID de Orden: {self.order_id}"
     
-class Application(tk.Frame):
-    def __init__(self, master=None):
+class App (tk.Frame):
+
+    def __init__(self,master=None):
         super().__init__(master)
         self.master = master
+        #self.base = Graph.graph()
+
+        # Insertar imagen
+        #imagen = Image.open('logoazul javeriana')
+        #imagen = ImageTk.PhotoImage(imagen) 
+        #self.label1= tk.Label(image=imagen).pack(padx=10, pady=100, ipadx=20, ipady=5)
 
         # Definición de la lista de órdenes vacía
         self.orders = [] 
-        self.master.geometry("600x400")
 
+        # Definición de la ventana
         width = self.master.winfo_screenwidth()
         height = self.master.winfo_screenheight()
-        x = (width - 600) // 2
+        x = (width - 500) // 2
         y = (height - 400) // 2
-        self.master.geometry("600x400+{}+{}".format(x, y))
+        self.master.geometry("500x400+{}+{}".format(x, y))
         self.master.title("Celda de Manufactura")
         self.pack()
         self.create_widgets()
-
+        
     def create_widgets(self):
-        self.create_order_button = tk.Button(self, text="Crear Orden", command=self.create_order)
-        self.create_order_button.pack(side="top")
-        self.delete_order_button = tk.Button(self, text="Eliminar Orden", command=self.delete_order)
-        self.delete_order_button.pack(side="top")
-        self.modify_order_button = tk.Button(self, text="Modificar Orden", command=self.modify_order)
-        self.modify_order_button.pack(side="top")
-        self.print_orders_button = tk.Button(self, text="Ver órdenes", command=self.print_orders)
-        self.print_orders_button.pack(side="top")
 
+        self.label = ttk.Label(self, text="PANTALLA PRINCIPAL")
+        self.label.pack(anchor= "center",pady=55)
+
+        self.create_order_button = ttk.Button(self, text="Crear Orden", command=self.create_order)
+        self.create_order_button.pack(padx=20, pady=2, ipadx=70, ipady=5)
+
+        self.delete_order_button = ttk.Button(self, text="Eliminar Orden", command=self.delete_order)
+        self.delete_order_button.pack(padx=20, pady=2,ipadx=65, ipady=5)
+        
+        self.modify_order_button = ttk.Button(self, text="Modificar Orden", command=self.modify_order)
+        self.modify_order_button.pack(padx=20, pady=2, ipadx=60, ipady=5)
+
+        self.modify_storage_button = ttk.Button(self, text="Modificar Almacén", command=self.create_order)
+        self.modify_storage_button.pack(padx=20, pady=2, ipadx=53, ipady=5)
+
+        self.print_orders_button = ttk.Button(self, text="Información Celda de Manufactura", command=self.print_orders)
+        self.print_orders_button.pack(padx=20, pady=2, ipadx=11, ipady=5)
+        
     def create_order(self):
         # Lógica para crear una orden aquí
         self.create_order_screen()
@@ -349,5 +367,24 @@ class Application(tk.Frame):
 
 if __name__ == '__main__':
     root = tk.Tk()
-    app = Application(master=root)
+    app = App(master=root)
     app.mainloop()
+
+    
+    #create_order('Empack',10,'Piece1',['Torno_Empack_P1','Melling_Empack_P1','Inspection_P1'],['Torno','Melling','Inspection'])
+    #update_data('Orden2','order',['Created',6],['State','Amount'])
+    #info =base.get_data('order','Orden2')
+    #for valor in info[0].values():
+    #    print(valor)
+    #    for res in valor.values():
+    #        print(res)
+
+    #data = "name:'pepe',hoja :'ii'"
+    #base.relation_data('PRUEBA',data,'order','piece',"Orden2","Piece2")
+
+
+    # Obtener una relación específica entre dos nodos
+    #info = base.get_relation('order','Orden2','piece','Piece2')
+    #info = base.get_node_relation('MACHINE','station','machine')
+    #info = base.get_data('order')
+    #print(info)
