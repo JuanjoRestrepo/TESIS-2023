@@ -1,0 +1,28 @@
+1 NT
+2 MO 100, O
+3 SP 4, H
+4 MO 1, O
+5 SP 8, H
+6 MO 2, O
+7 GC
+8 MO 1, C
+9 MO 3, C
+10 MO 4, C
+11 MO 5, C
+12 MO 6, C
+13 MO 7, C
+14 MO 6, C
+15 MO 8, C
+16 MO 9, C
+17 MO 8, C
+18 MO 11, C
+19 MO 12, C
+20 MO 11, C
+21 MO 14, C
+22 MO 15, C
+23 GO 
+24 MO 16, O
+25 MO 17, O
+26 MO 100, O
+27 MO 100, O
+RN 1, 27

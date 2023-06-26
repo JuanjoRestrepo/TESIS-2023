@@ -1,0 +1,8 @@
+1 NT
+2 MO 1, O
+3 MO 2, O
+4 MO 1, C
+5 MO 3, C
+6 MO 4, C
+7 GC
+RN 1, 7
