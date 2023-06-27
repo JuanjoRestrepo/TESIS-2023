@@ -3,6 +3,43 @@ from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
 
+
+
+
+'''
+
+# Definición de la ventana
+        width = self.master.winfo_screenwidth()
+        height = self.master.winfo_screenheight()
+        x = (width - 500) // 2
+        y = (height - 400) // 2
+        self.master.geometry("500x400+{}+{}".format(x, y))
+        self.master.title("Celda de Manufactura")
+        self.pack()
+        self.create_widgets()
+        
+    def create_widgets(self):
+
+        self.label = ttk.Label(self, text="PANTALLA PRINCIPAL")
+        self.label.pack(anchor= "center",pady=55)
+
+        self.create_order_button = ttk.Button(self, text="Crear Orden", command=self.create_order)
+        self.create_order_button.pack(padx=20, pady=2, ipadx=70, ipady=5)
+
+        self.delete_order_button = ttk.Button(self, text="Eliminar Orden")
+        self.delete_order_button.pack(padx=20, pady=2,ipadx=65, ipady=5)
+        
+        self.modify_order_button = ttk.Button(self, text="Modificar Orden")
+        self.modify_order_button.pack(padx=20, pady=2, ipadx=60, ipady=5)
+
+        self.modify_storage_button = ttk.Button(self, text="Modificar Almacén")
+        self.modify_storage_button.pack(padx=20, pady=2, ipadx=53, ipady=5)
+
+        self.print_orders_button = ttk.Button(self, text="Información Celda de Manufactura")
+        self.print_orders_button.pack(padx=20, pady=2, ipadx=11, ipady=5)
+
+'''
+
 class Order:
     def __init__(self, order_id, pieces, material, piece, date_created):
         self.order_id = order_id
@@ -10,6 +47,15 @@ class Order:
         self.material = material
         self.piece = piece
         self.date_created = date_created
+
+    # Generar el nuevo ID basado en el índice y la cantidad de piezas
+    def update_id(self):
+        
+        # Obtener la fecha y el código de material original
+        date_string = self.order_id.split("_")[1]
+        material_code = self.order_id.split("_")[0]
+        new_id = "{}_{}_C{}".format(material_code, date_string, self.pieces)
+        self.order_id = new_id
     
     def __str__(self):
         return f"ID de Orden: {self.order_id}"
@@ -21,7 +67,7 @@ class Application(tk.Frame):
 
         # Definición de la lista de órdenes vacía
         self.orders = [] 
-        self.master.geometry("600x400")
+        # self.master.geometry("600x400")
 
         width = self.master.winfo_screenwidth()
         height = self.master.winfo_screenheight()
@@ -33,14 +79,23 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
+        self.label = ttk.Label(self, text="PANTALLA PRINCIPAL")
+        self.label.pack(anchor= "center",pady=55)
+
         self.create_order_button = tk.Button(self, text="Crear Orden", command=self.create_order)
-        self.create_order_button.pack(side="top")
+        self.create_order_button.pack(padx=20, pady=2, ipadx=70, ipady=5)
+
         self.delete_order_button = tk.Button(self, text="Eliminar Orden", command=self.delete_order)
-        self.delete_order_button.pack(side="top")
+        self.delete_order_button.pack(padx=20, pady=2,ipadx=65, ipady=5)
+
         self.modify_order_button = tk.Button(self, text="Modificar Orden", command=self.modify_order)
-        self.modify_order_button.pack(side="top")
+        self.modify_order_button.pack(padx=20, pady=2, ipadx=60, ipady=5)
+
+        self.modify_storage_button = tk.Button(self, text="Modificar Almacén", command=self.modify_storage)
+        self.modify_storage_button.pack(padx=20, pady=2, ipadx=55, ipady=5)
+
         self.print_orders_button = tk.Button(self, text="Ver órdenes", command=self.print_orders)
-        self.print_orders_button.pack(side="top")
+        self.print_orders_button.pack(padx=20, pady=2, ipadx=50, ipady=5)
 
     def create_order(self):
         # Lógica para crear una orden aquí
@@ -54,6 +109,11 @@ class Application(tk.Frame):
         # Lógica para modificar una orden aquí
         self.modify_order_screen()
         print("Orden Modificada")
+    
+    def modify_storage(self):
+        # Lógica para modificar almacen
+        #self.modify_storage_screen()
+        print("Almacen Modificado")
 
     def print_orders(self):
         print("\n===== Ordenes =====")
@@ -323,6 +383,10 @@ class Application(tk.Frame):
         select_order_label = tk.Label(modify_order_window, text="Seleccione una orden:")
         select_order_label.pack(side="top", pady=10)
 
+        # Botón para regresar al menú principal
+        back_button = tk.Button(modify_order_window, text="Regresar al menú principal", command=modify_order_window.destroy)
+        back_button.pack(side="bottom", pady=10)
+
         order_ids = [order.order_id for order in self.orders]
         selected_order_id = tk.StringVar(modify_order_window)
         selected_order_id.set(order_ids[0])
@@ -365,8 +429,13 @@ class Application(tk.Frame):
                 # Botón para guardar los cambios realizados a la orden
                 def save_changes():
                     new_pieces = int(pieces_entry.get())
+                    old_order_id = found_order.order_id
                     found_order.pieces = new_pieces
+                    found_order.update_id()  # Actualizar el ID de la orden
                     modify_order_details_window.destroy()
+                    # Mostrar el mensaje de confirmación con el ID de la orden antes de ser modificada
+                    messagebox.showinfo("Orden Modificada", f"Orden {old_order_id} modificada.")
+
 
                 save_button = tk.Button(modify_order_details_window, text="Guardar Cambios", command=save_changes)
                 save_button.pack(side="top", pady=10)
@@ -414,9 +483,6 @@ class Application(tk.Frame):
             # Botón para cerrar la ventana de la lista de órdenes
             close_button = tk.Button(orders_list_window, text="Cerrar", command=orders_list_window.destroy)
             close_button.pack(side="bottom", pady=10)
-
-
-
 
 
 
