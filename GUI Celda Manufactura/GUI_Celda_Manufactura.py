@@ -135,8 +135,8 @@ class Application(tk.Frame):
         header_frame.pack(side="top", fill="x", pady=10)
         order_id_label = tk.Label(header_frame, text="ID de la Orden", width=30)
         order_id_label.pack(side="left")
-        piece_amount_label = tk.Label(header_frame, text="Cantidad de Piezas", width=20)
-        piece_amount_label.pack(side="left")
+        piece_amount_amount_label = tk.Label(header_frame, text="Cantidad de Piezas", width=20)
+        piece_amount_amount_label.pack(side="left")
         material_label = tk.Label(header_frame, text="Tipo de Material", width=20)
         material_label.pack(side="left")
         piece_type_label = tk.Label(header_frame, text="Tipo de Pieza", width=20)
@@ -150,8 +150,8 @@ class Application(tk.Frame):
             order_frame.pack(side="top", fill="x", pady=5)
             order_id_label = tk.Label(order_frame, text=order.order_id, width=30)
             order_id_label.pack(side="left")
-            piece_amount_label = tk.Label(order_frame, text=order.piece_amount_amount, width=20)
-            piece_amount_label.pack(side="left")
+            piece_amount_amount_label = tk.Label(order_frame, text=order.piece_amount_amount, width=20)
+            piece_amount_amount_label.pack(side="left")
             material_label = tk.Label(order_frame, text=order.material, width=20)
             material_label.pack(side="left")
             piece_type_label = tk.Label(order_frame, text=order.piece_type, width=20)
@@ -177,12 +177,12 @@ class Application(tk.Frame):
         create_order_window.title("CREAR ORDEN")
 
         # Frame para la cantidad de piezas
-        piece_amount_frame = tk.Frame(create_order_window)
-        piece_amount_frame.pack(side="top", pady=10)
-        piece_amount_label = tk.Label(piece_amount_frame, text="Cantidad de Piezas:")
-        piece_amount_label.pack(side="left")
-        piece_amount_entry = tk.Entry(piece_amount_frame)
-        piece_amount_entry.pack(side="left")
+        piece_amount_amount_frame = tk.Frame(create_order_window)
+        piece_amount_amount_frame.pack(side="top", pady=10)
+        piece_amount_amount_label = tk.Label(piece_amount_amount_frame, text="Cantidad de Piezas:")
+        piece_amount_amount_label.pack(side="left")
+        piece_amount_amount_entry = tk.Entry(piece_amount_amount_frame)
+        piece_amount_amount_entry.pack(side="left")
 
         # Frame para el tipo de material
         material_frame = tk.Frame(create_order_window)
@@ -205,7 +205,7 @@ class Application(tk.Frame):
         back_button.pack(side="bottom", pady=10)
 
         def create_order():
-            piece_amount_amount = piece_amount_entry.get()
+            piece_amount_amount = piece_amount_amount_entry.get()
             material = material_combobox.get()
             piece_type = piece_type_combobox.get()
 
@@ -276,8 +276,8 @@ class Application(tk.Frame):
             date_created_label.pack(side="top", pady=10)
             
             # Mostrar la cantidad de piezas de la orden
-            piece_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.piece_amount_amount))
-            piece_amount_label.pack(side="top", pady=10)
+            piece_amount_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.piece_amount_amount))
+            piece_amount_amount_label.pack(side="top", pady=10)
             
             # Mostrar el tipo de material de la orden
             material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order.material))
@@ -418,17 +418,17 @@ class Application(tk.Frame):
                 order_id_label.pack(side="top", pady=10)
 
                 # Label y Entry para modificar la cantidad de piezas de la orden
-                piece_amount_label = tk.Label(modify_order_details_window, text="Cantidad de Piezas:")
-                piece_amount_label.pack(side="top", pady=10)
-                piece_amount_entry = tk.Entry(modify_order_details_window, width=20)
-                piece_amount_entry.pack(side="top", pady=10)
+                piece_amount_amount_label = tk.Label(modify_order_details_window, text="Cantidad de Piezas:")
+                piece_amount_amount_label.pack(side="top", pady=10)
+                piece_amount_amount_entry = tk.Entry(modify_order_details_window, width=20)
+                piece_amount_amount_entry.pack(side="top", pady=10)
 
                 # Asignar el valor actual de las piezas de la orden al Entry
-                piece_amount_entry.insert(0, found_order.piece_amount_amount)
+                piece_amount_amount_entry.insert(0, found_order.piece_amount_amount)
 
                 # Botón para guardar los cambios realizados a la orden
                 def save_changes():
-                    new_piece_amount_amount = int(piece_amount_entry.get())
+                    new_piece_amount_amount = int(piece_amount_amount_entry.get())
                     old_order_id = found_order.order_id
                     found_order.piece_amount_amount = new_piece_amount_amount
                     found_order.update_id()  # Actualizar el ID de la orden
@@ -508,8 +508,8 @@ class Application(tk.Frame):
         date_created_label.pack(side="top", pady=10)
         
         # Mostrar la cantidad de piezas de la orden
-        piece_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.piece_amount_amount))
-        piece_amount_label.pack(side="top", pady=10)
+        piece_amount_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.piece_amount_amount))
+        piece_amount_amount_label.pack(side="top", pady=10)
         
         # Mostrar el tipo de material de la orden
         material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order.material))
