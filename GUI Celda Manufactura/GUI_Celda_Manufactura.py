@@ -361,7 +361,11 @@ class Application(tk.Frame):
 
         order_ids = [order.order_id for order in self.orders]
         selected_order_id = tk.StringVar(modify_order_window)
-        selected_order_id.set(order_ids[0])
+        if order_ids:
+            # asegurarse de que la lista order_ids no esté vacía antes de intentar establecer el primer elemento en selected_order_id. 
+            # Si la lista está vacía, no se establece ningún valor inicial en el Combobox.
+            selected_order_id.set(order_ids[0]) # Establecer el primer elemento solo si la lista no está vacía
+
         order_combobox = ttk.Combobox(modify_order_window, textvariable=selected_order_id, values=order_ids)
         order_combobox.pack(side="top", pady=10)
 
