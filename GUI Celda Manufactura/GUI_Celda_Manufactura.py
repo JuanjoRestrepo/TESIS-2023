@@ -307,30 +307,32 @@ class Application(tk.Frame):
                 error_button.pack(side="bottom", pady=10)
                 return
             
-            selected_order = self.orders[order_combobox.current()]
-            selected_order_id = selected_order.order_id
-            
-            # Eliminar la orden de la lista de órdenes
-            self.orders.remove(selected_order)
-            
-            # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
-            print("Orden Eliminada: Orden {}".format(selected_order_id))
+            confirm = messagebox.askyesno("Confirmación", "¿Estás seguro de que deseas eliminar esta orden?")
+            if confirm:
+                selected_order = self.orders[order_combobox.current()]
+                selected_order_id = selected_order.order_id
+                
+                # Eliminar la orden de la lista de órdenes
+                self.orders.remove(selected_order)
+                
+                # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
+                print("Orden Eliminada: Orden {}".format(selected_order_id))
 
-            deleted_order_message = tk.Toplevel(delete_order_window)
+                deleted_order_message = tk.Toplevel(delete_order_window)
 
-            deleted_order_message.title("Orden Eliminada")
-            deleted_order_message.geometry("400x200")
-            deleted_order_message.resizable(False, False)
-            width = deleted_order_message.winfo_screenwidth()
-            height = deleted_order_message.winfo_screenheight()
-            x = (width - 400) // 2
-            y = (height - 200) // 2
-            deleted_order_message.geometry("+{}+{}".format(x, y))
+                deleted_order_message.title("Orden Eliminada")
+                deleted_order_message.geometry("400x200")
+                deleted_order_message.resizable(False, False)
+                width = deleted_order_message.winfo_screenwidth()
+                height = deleted_order_message.winfo_screenheight()
+                x = (width - 400) // 2
+                y = (height - 200) // 2
+                deleted_order_message.geometry("+{}+{}".format(x, y))
 
-            deleted_order_label = tk.Label(deleted_order_message, text="Orden Eliminada: Orden {}".format(selected_order_id))
-            deleted_order_label.pack(side="top", pady=10)
-            deleted_order_button = tk.Button(deleted_order_message, text="Aceptar", command=lambda: [deleted_order_message.destroy(), delete_order_window.destroy(), self.go_to_main_screen()])
-            deleted_order_button.pack(side="bottom", pady=10)
+                deleted_order_label = tk.Label(deleted_order_message, text="Orden Eliminada: Orden {}".format(selected_order_id))
+                deleted_order_label.pack(side="top", pady=10)
+                deleted_order_button = tk.Button(deleted_order_message, text="Aceptar", command=lambda: [deleted_order_message.destroy(), delete_order_window.destroy(), self.go_to_main_screen()])
+                deleted_order_button.pack(side="bottom", pady=10)
         
         # Botón para eliminar la orden
         delete_order_button = tk.Button(delete_order_window, text="Eliminar Orden", command=delete_order)
