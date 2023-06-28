@@ -320,8 +320,7 @@ class Application(tk.Frame):
         back_button.pack(side="bottom", pady=10)
 
         def delete_order():
-            selected_order = self.orders[order_combobox.current()]
-            if not selected_order:
+            if not order_combobox.get():
                 error_message = tk.Toplevel(delete_order_window)
                 
                 # Centrar la ventana de mensaje de eliminar ordenes
@@ -336,8 +335,9 @@ class Application(tk.Frame):
                 error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
                 error_button.pack(side="bottom", pady=10)
                 return
-            else:
-                selected_order_id = selected_order.order_id
+            
+            selected_order = self.orders[order_combobox.current()]
+            selected_order_id = selected_order.order_id
             
             # Eliminar la orden de la lista de órdenes
             self.orders.remove(selected_order)
@@ -345,7 +345,7 @@ class Application(tk.Frame):
             # Cerrar la ventana de Eliminar Orden y volver a la pantalla principal
             print("Orden Eliminada: Orden {}".format(selected_order_id))
 
-            deleted_order_message = tk.Toplevel(self)
+            deleted_order_message = tk.Toplevel(delete_order_window)
 
             deleted_order_message.title("Orden Eliminada")
             deleted_order_message.geometry("400x200")
@@ -357,11 +357,10 @@ class Application(tk.Frame):
             deleted_order_message.geometry("+{}+{}".format(x, y))
 
             deleted_order_label = tk.Label(deleted_order_message, text="Orden Eliminada: Orden {}".format(selected_order_id))
-
             deleted_order_label.pack(side="top", pady=10)
             deleted_order_button = tk.Button(deleted_order_message, text="Aceptar", command=lambda: [deleted_order_message.destroy(), delete_order_window.destroy(), self.go_to_main_screen()])
             deleted_order_button.pack(side="bottom", pady=10)
-            
+        
         # Botón para eliminar la orden
         delete_order_button = tk.Button(delete_order_window, text="Eliminar Orden", command=delete_order)
         delete_order_button.pack(side="bottom", pady=10)
