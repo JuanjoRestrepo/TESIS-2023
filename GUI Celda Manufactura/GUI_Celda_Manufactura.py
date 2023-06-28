@@ -4,42 +4,6 @@ from tkinter import messagebox
 from datetime import datetime
 
 
-
-
-'''
-
-# Definición de la ventana
-        width = self.master.winfo_screenwidth()
-        height = self.master.winfo_screenheight()
-        x = (width - 500) // 2
-        y = (height - 400) // 2
-        self.master.geometry("500x400+{}+{}".format(x, y))
-        self.master.title("Celda de Manufactura")
-        self.pack()
-        self.create_widgets()
-        
-    def create_widgets(self):
-
-        self.label = ttk.Label(self, text="PANTALLA PRINCIPAL")
-        self.label.pack(anchor= "center",pady=55)
-
-        self.create_order_button = ttk.Button(self, text="Crear Orden", command=self.create_order)
-        self.create_order_button.pack(padx=20, pady=2, ipadx=70, ipady=5)
-
-        self.delete_order_button = ttk.Button(self, text="Eliminar Orden")
-        self.delete_order_button.pack(padx=20, pady=2,ipadx=65, ipady=5)
-        
-        self.modify_order_button = ttk.Button(self, text="Modificar Orden")
-        self.modify_order_button.pack(padx=20, pady=2, ipadx=60, ipady=5)
-
-        self.modify_storage_button = ttk.Button(self, text="Modificar Almacén")
-        self.modify_storage_button.pack(padx=20, pady=2, ipadx=53, ipady=5)
-
-        self.print_orders_button = ttk.Button(self, text="Información Celda de Manufactura")
-        self.print_orders_button.pack(padx=20, pady=2, ipadx=11, ipady=5)
-
-'''
-
 class Order:
     def __init__(self, order_id, piece_amount_amount, material, piece_type, date_created):
         self.order_id = order_id
