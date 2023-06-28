@@ -164,6 +164,11 @@ class Application(tk.Frame):
         piece_type_combobox = ttk.Combobox(piece_type_frame, values=["Pieza1", "Pieza2", "Pieza3"])
         piece_type_combobox.pack(side="left")
 
+        def clear_fields():
+            piece_amount_amount_entry.delete(0, tk.END)
+            material_combobox.set('')
+            piece_type_combobox.set('')
+
         # Regresar
         back_button = tk.Button(create_order_window, text="Regresar a pantalla principal",  command=lambda: [create_order_window.destroy(), create_order_window.destroy(), self.go_to_main_screen()])
         back_button.pack(side="bottom", pady=10)
@@ -254,6 +259,8 @@ class Application(tk.Frame):
             # Botón para cerrar la ventana de detalles de la orden
             close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
             close_button.pack(side="bottom", pady=10)
+
+            clear_fields()
         
         # Botón para crear la orden
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
