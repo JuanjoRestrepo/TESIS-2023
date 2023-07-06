@@ -23,8 +23,6 @@ class Order:
         date_string = self.order_id.split("_")[1]
 
         # Generar el nuevo ID
-
-        #order_id = "{}P{}_{}_C{}".format(material[0], piece_type[-1], date_string, piece_amount)
         new_id = "{}P{}_{}_C{}".format(material_code, piece_type_code, date_string, self.piece_amount)
         self.order_id = new_id
 
