@@ -64,7 +64,7 @@ class Application(tk.Frame):
         self.modify_storage_button = tk.Button(self, text="Modificar Almacén", command=self.modify_storage)
         self.modify_storage_button.pack(padx=20, pady=2, ipadx=55, ipady=5)
 
-        self.print_orders_button = tk.Button(self, text="Ver órdenes", command=self.print_orders)
+        self.print_orders_button = tk.Button(self, text="Ver Órdenes", command=self.print_orders)
         self.print_orders_button.pack(padx=20, pady=2, ipadx=50, ipady=5)
 
     def create_order(self):
