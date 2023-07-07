@@ -570,7 +570,7 @@ class Application(tk.Frame):
         back_button = tk.Button(modify_storage_window, text="Regresar al menú principal", command=lambda: [modify_storage_window.destroy(), modify_storage_window.destroy(), self.go_to_main_screen()])
         back_button.pack(side="bottom", pady=10)
 
-    
+    # ventana para ver los detalles de las órdenes ya creadas
     def show_order_details(order):
         # Crear una ventana para mostrar los detalles de la orden
         order_details_window = tk.Toplevel()
