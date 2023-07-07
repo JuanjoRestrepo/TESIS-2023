@@ -30,6 +30,20 @@ class Order:
     def __str__(self):
         return f"ID de Orden: {self.order_id}"
     
+class Warehouse:
+    def __init__(self):
+        self.pieces = {"Aluminio": 0, "Empack": 0}
+
+    def add_pieces(self, material, amount):
+        if material in self.pieces:
+            self.pieces[material] += amount
+
+    def get_pieces(self, material):
+        if material in self.pieces:
+            return self.pieces[material]
+        return 0
+
+    
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -37,7 +51,9 @@ class Application(tk.Frame):
 
         # Definición de la lista de órdenes vacía
         self.orders = [] 
-        # self.master.geometry("600x400")
+
+        # Crear una instancia de Warehouse
+        self.warehouse = Warehouse()
 
         width = self.master.winfo_screenwidth()
         height = self.master.winfo_screenheight()
@@ -82,7 +98,7 @@ class Application(tk.Frame):
     
     def modify_storage(self):
         # Lógica para modificar almacen
-        #self.modify_storage_screen()
+        self.modify_storage_screen()
         print("Almacen Modificado")
 
     def print_orders(self):
@@ -498,7 +514,61 @@ class Application(tk.Frame):
             close_button = tk.Button(orders_list_window, text="Cerrar", command=orders_list_window.destroy)
             close_button.pack(side="bottom", pady=10)
 
+    def modify_storage_screen(self):
+        self.master.withdraw()
+        modify_storage_window = tk.Toplevel(self.master)
 
+        # Centrar la ventana de modificar almacén
+        width = modify_storage_window.winfo_screenwidth()
+        height = modify_storage_window.winfo_screenheight()
+        x = (width - 400) // 2
+        y = (height - 300) // 2
+        modify_storage_window.geometry("400x300+{}+{}".format(x, y))
+        modify_storage_window.title("Modificar Almacén")
+
+        # Etiquetas y campos de entrada para la cantidad de piezas de cada tipo de material
+        aluminum_label = tk.Label(modify_storage_window, text="Piezas de Aluminio:")
+        aluminum_label.pack(side="top", pady=10)
+        aluminum_entry = tk.Entry(modify_storage_window)
+        aluminum_entry.pack(side="top", pady=5)
+
+        empack_label = tk.Label(modify_storage_window, text="Piezas de Empack:")
+        empack_label.pack(side="top", pady=10)
+        empack_entry = tk.Entry(modify_storage_window)
+        empack_entry.pack(side="top", pady=5)
+
+        def clear_fields_warehouse():
+            aluminum_entry.delete(0, tk.END)
+            empack_entry.delete(0, tk.END)
+
+        def save_changes():
+            try:
+                aluminum_pieces = int(aluminum_entry.get())
+                empack_pieces = int(empack_entry.get())
+
+                if aluminum_pieces < 0 or empack_pieces < 0:
+                    messagebox.showerror("Error", "La cantidad de piezas debe ser un valor positivo.")
+                    return
+
+                # Actualizar la cantidad de piezas en el almacén
+                self.warehouse.add_pieces("Aluminio", aluminum_pieces)
+                self.warehouse.add_pieces("Empack", empack_pieces)
+
+                # Mostrar mensaje de confirmación
+                messagebox.showinfo("Modificación de Almacén", "La cantidad de piezas en el almacén se ha actualizado correctamente.")
+
+            except ValueError:
+                messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
+
+            clear_fields_warehouse()
+
+        # Botón para guardar los cambios
+        save_button = tk.Button(modify_storage_window, text="Guardar Cambios", command=save_changes)
+        save_button.pack(side="top", pady=10)
+
+        # Botón para regresar al menú principal
+        back_button = tk.Button(modify_storage_window, text="Regresar al menú principal", command=lambda: [modify_storage_window.destroy(), modify_storage_window.destroy(), self.go_to_main_screen()])
+        back_button.pack(side="bottom", pady=10)
 
     
     def show_order_details(order):
