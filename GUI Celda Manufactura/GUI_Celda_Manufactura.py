@@ -510,8 +510,9 @@ class Application(tk.Frame):
             for order in self.orders:
                 table.insert("", "end", values=(order.order_id, order.product, order.piece_amount_amount))
 
+            
             # Botón para cerrar la ventana de la lista de órdenes
-            close_button = tk.Button(orders_list_window, text="Cerrar", command=orders_list_window.destroy)
+            close_button = tk.Button(orders_list_window, text="Cerrar", command=self.go_to_main_screen())
             close_button.pack(side="bottom", pady=10)
 
     def modify_storage_screen(self):
@@ -537,6 +538,13 @@ class Application(tk.Frame):
         empack_entry = tk.Entry(modify_storage_window)
         empack_entry.pack(side="top", pady=5)
 
+        # Crear etiquetas para mostrar las cantidades actuales en el almacén
+        self.aluminum_pieces_label = tk.Label(modify_storage_window, text="Cantidad de Piezas de Aluminio: {}".format(self.warehouse.get_pieces("Aluminio")))
+        self.aluminum_pieces_label.pack(side="top", pady=5)
+        self.empack_pieces_label = tk.Label(modify_storage_window, text="Cantidad de Piezas de Empack: {}".format(self.warehouse.get_pieces("Empack")))
+        self.empack_pieces_label.pack(side="top", pady=5)
+
+        # Limpiar los campos de entrada
         def clear_fields_warehouse():
             aluminum_entry.delete(0, tk.END)
             empack_entry.delete(0, tk.END)
@@ -554,8 +562,13 @@ class Application(tk.Frame):
                 self.warehouse.add_pieces("Aluminio", aluminum_pieces)
                 self.warehouse.add_pieces("Empack", empack_pieces)
 
+                # Actualizar las etiquetas con las nuevas cantidades
+                self.aluminum_pieces_label.config(text="Cantidad Actual de Piezas de Aluminio: {}".format(self.warehouse.get_pieces("Aluminio")))
+                self.empack_pieces_label.config(text="Cantidad Actual de Piezas de Empack: {}".format(self.warehouse.get_pieces("Empack")))
+
                 # Mostrar mensaje de confirmación
                 messagebox.showinfo("Modificación de Almacén", "La cantidad de piezas en el almacén se ha actualizado correctamente.")
+                
 
             except ValueError:
                 messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
@@ -566,7 +579,6 @@ class Application(tk.Frame):
         save_button = tk.Button(modify_storage_window, text="Guardar Cambios", command=save_changes)
         save_button.pack(side="top", pady=10)
 
-        # Botón para regresar al menú principal
         back_button = tk.Button(modify_storage_window, text="Regresar al menú principal", command=lambda: [modify_storage_window.destroy(), modify_storage_window.destroy(), self.go_to_main_screen()])
         back_button.pack(side="bottom", pady=10)
 
@@ -607,6 +619,8 @@ class Application(tk.Frame):
         close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
         close_button.pack(side="bottom", pady=10)
     
+
+    # Volver al menú principal
     def go_to_main_screen(self):
         self.master.deiconify()  # Mostrar la pantalla principal
 
