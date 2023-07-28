@@ -220,6 +220,7 @@ class Application(tk.Frame):
                 piece_amount = int(piece_amount)
                 if piece_amount <= 0:
                     raise ValueError("La cantidad de piezas debe ser un número positivo.")
+            
             except ValueError as e:
                 error_message = tk.Toplevel(create_order_window)
                 error_message.title("Error")
@@ -236,53 +237,62 @@ class Application(tk.Frame):
                 error_button.pack(side="bottom", pady=10)
                 return
             
-            # Crear el ID de la orden y la fecha de creación
-            date_created = datetime.now()
-            
-            #Convertimos la fecha de formato <class 'datetime.datetime'> a formato <string>
-            date_string = date_created.strftime("%Y-%m-%d")
-            order_id = "{}P{}_{}_C{}".format(material[0], piece_type[-1], date_string, piece_amount)
+            # Verificar si hay suficientes piezas en el almacén
+            if self.warehouse.get_pieces(material) >= piece_amount:
+                # Crear el ID de la orden y la fecha de creación
+                date_created = datetime.now()
 
-            # Crear una instancia de la clase Order con los datos ingresados
-            order = Order(order_id, piece_amount, material, piece_type, date_created)
-            
-            # Agregar la orden a la lista de órdenes
-            self.orders.append(order)
-            
-            # Cerrar la ventana de Crear Orden con sus detalles y volver a la pantalla principal
-            order_details_window = tk.Toplevel(create_order_window)
-            width = order_details_window.winfo_screenwidth()
-            height = order_details_window.winfo_screenheight()
-            x = (width - 400) // 2
-            y = (height - 250) // 2
-            order_details_window.title("Detalles de la Orden")
-            order_details_window.geometry("400x250+{}+{}".format(x, y))
-            
-            # Mostrar el ID de la orden
-            order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
-            order_id_label.pack(side="top", pady=10)
-            
-            # Mostrar la fecha de creación de la orden
-            date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created.strftime("%Y-%m-%d")))
-            date_created_label.pack(side="top", pady=10)
-            
-            # Mostrar la cantidad de piezas de la orden
-            piece_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.piece_amount))
-            piece_amount_label.pack(side="top", pady=10)
-            
-            # Mostrar el tipo de material de la orden
-            material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order.material))
-            material_label.pack(side="top", pady=10)
-            
-            # Mostrar el tipo de pieza de la orden
-            piece_type_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order.piece_type))
-            piece_type_label.pack(side="top", pady=10)
-            
-            # Botón para cerrar la ventana de detalles de la orden
-            close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
-            close_button.pack(side="bottom", pady=10)
+                #Convertimos la fecha de formato <class 'datetime.datetime'> a formato <string>
+                date_string = date_created.strftime("%Y-%m-%d")
+                order_id = "{}P{}_{}_C{}".format(material[0], piece_type[-1], date_string, piece_amount)
 
-            clear_fields()
+                # Crear una instancia de la clase Order con los datos ingresados
+                order = Order(order_id, piece_amount, material, piece_type, date_created)
+                
+                # Agregar la orden a la lista de órdenes
+                self.orders.append(order)
+
+                # Actualizar la cantidad de piezas en el almacén
+                self.warehouse.add_pieces(material, -piece_amount)
+
+                # Cerrar la ventana de Crear Orden con sus detalles y volver a la pantalla principal
+                order_details_window = tk.Toplevel(create_order_window)
+                width = order_details_window.winfo_screenwidth()
+                height = order_details_window.winfo_screenheight()
+                x = (width - 400) // 2
+                y = (height - 250) // 2
+                order_details_window.title("Detalles de la Orden")
+                order_details_window.geometry("400x250+{}+{}".format(x, y))
+                
+                # Mostrar el ID de la orden
+                order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order.order_id))
+                order_id_label.pack(side="top", pady=10)
+                
+                # Mostrar la fecha de creación de la orden
+                date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order.date_created.strftime("%Y-%m-%d")))
+                date_created_label.pack(side="top", pady=10)
+                
+                # Mostrar la cantidad de piezas de la orden
+                piece_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order.piece_amount))
+                piece_amount_label.pack(side="top", pady=10)
+                
+                # Mostrar el tipo de material de la orden
+                material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order.material))
+                material_label.pack(side="top", pady=10)
+                
+                # Mostrar el tipo de pieza de la orden
+                piece_type_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order.piece_type))
+                piece_type_label.pack(side="top", pady=10)
+                
+                # Botón para cerrar la ventana de detalles de la orden
+                close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
+                close_button.pack(side="bottom", pady=10)
+
+                clear_fields()
+
+            else:
+                # Mostrar mensaje de error si no hay suficientes piezas en el almacén
+                messagebox.showerror("Error", "No hay suficientes piezas de {} en el almacén.".format(material))
         
         # Botón para crear la orden
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
