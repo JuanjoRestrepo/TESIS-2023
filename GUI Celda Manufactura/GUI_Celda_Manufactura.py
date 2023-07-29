@@ -293,6 +293,7 @@ class Application(tk.Frame):
             else:
                 # Mostrar mensaje de error si no hay suficientes piezas en el almacén
                 messagebox.showerror("Error", "No hay suficientes piezas de {} en el almacén.".format(material))
+                clear_fields()
         
         # Botón para crear la orden
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
@@ -514,7 +515,8 @@ class Application(tk.Frame):
 
             # Agregar los encabezados a la tabla
             for header in table_headers:
-                table.heading(header, text=header)
+                table.heading(header, text=header, anchor="center")
+                table.column(header, anchor="center")
 
             # Agregar las órdenes a la tabla
             for order in self.orders:
