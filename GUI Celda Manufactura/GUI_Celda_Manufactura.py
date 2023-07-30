@@ -457,26 +457,59 @@ class Application(tk.Frame):
                 piece_type_combobox.set(found_order.piece_type)
 
                 # Botón para guardar los cambios realizados a la orden
+
                 def save_changes():
-                    new_piece_amount = piece_amount_entry.get()
-                    new_material = material_combobox.get()
-                    new_piece_type = piece_type_combobox.get()
+                    try:
+                        new_piece_amount_str = piece_amount_entry.get()
+                        new_piece_amount = int(new_piece_amount_str)  # Convertir a entero
 
-                    if not new_piece_amount or not new_material or not new_piece_type:
-                        messagebox.showerror("Error", "Todos los campos son requeridos.")
-                        return
+                        new_material = material_combobox.get()
+                        new_piece_type = piece_type_combobox.get()
+                        
+                        if not new_piece_amount_str.isdigit() or new_piece_amount <= 0:
+                            messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico entero mayor que cero.")
+                            return
+                        
+                        # Obtener la orden seleccionada para modificar
+                        selected_order = None
+                        for order in self.orders:
+                            if order.order_id == selected_order_id.get():
+                                selected_order = order
+                                break
+                        
+                        if not selected_order:
+                            messagebox.showerror("Error", "La orden seleccionada no existe.")
+                            return
+                        
+                        if new_piece_amount != selected_order.piece_amount:
+                            # Restar las piezas anteriores al almacén
+                            self.warehouse.add_pieces(selected_order.material, selected_order.piece_amount)
 
-                    found_order.piece_amount = new_piece_amount
-                    found_order.material = new_material
-                    found_order.piece_type = new_piece_type
-                    found_order.update_id()
+                             # Verificar si hay suficientes piezas en el almacén para realizar el cambio
+                            difference = new_piece_amount - selected_order.piece_amount
+                            if difference > 0 and self.warehouse.get_pieces(new_material) < difference:
+                                messagebox.showerror("Error", "No hay suficientes piezas en el almacén para completar la modificación.")
+                                return
 
-                    messagebox.showinfo("Orden Modificada", f"Orden {found_order.order_id} modificada exitosamente.")
+                            # Restar o agregar las piezas al almacén según corresponda
+                            self.warehouse.add_pieces(new_material, difference)
 
-                    modify_order_details_window.destroy()
-                    modify_order_window.destroy()
-                    self.master.deiconify()
+                        # Actualizar los datos de la orden con los cambios realizados
+                        selected_order.piece_amount = new_piece_amount
+                        selected_order.material = new_material
+                        selected_order.piece_type = new_piece_type
+                        selected_order.update_id()
 
+                        messagebox.showinfo("Orden Modificada", f"Orden {selected_order.order_id} modificada exitosamente.")
+
+                        modify_order_details_window.destroy()
+                        modify_order_window.destroy()
+                        self.master.deiconify()
+
+                    except ValueError:
+                        messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
+
+                #clear_fields()   
 
                 save_button = tk.Button(modify_order_details_window, text="Guardar Cambios", command=save_changes)
                 save_button.pack(side="top", pady=10)
