@@ -219,22 +219,15 @@ class Application(tk.Frame):
             try:
                 piece_amount = int(piece_amount)
                 if piece_amount <= 0:
-                    raise ValueError("La cantidad de piezas debe ser un número positivo.")
+                    # Si la entrada es un valor menor o igual a cero
+                    raise ValueError("La cantidad de piezas debe ser un valor positivo.")
             
             except ValueError as e:
-                error_message = tk.Toplevel(create_order_window)
-                error_message.title("Error")
-                error_message.geometry("400x200")
-                error_message.resizable(False, False)
-                width = error_message.winfo_screenwidth()
-                height = error_message.winfo_screenheight()
-                x = (width - 400) // 2
-                y = (height - 200) // 2
-                error_message.geometry("+{}+{}".format(x, y))
-                error_label = tk.Label(error_message, text=str(e))
-                error_label.pack(side="top", pady=10)
-                error_button = tk.Button(error_message, text="Aceptar", command=error_message.destroy)
-                error_button.pack(side="bottom", pady=10)
+                # Si la entrada es un valor NO NUMÉRICO
+                if "invalid literal for int()" in str(e):
+                    messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
+                else:
+                    messagebox.showerror("Error", str(e))
                 return
             
             # Verificar si hay suficientes piezas en el almacén
@@ -252,7 +245,7 @@ class Application(tk.Frame):
                 # Agregar la orden a la lista de órdenes
                 self.orders.append(order)
 
-                # Actualizar la cantidad de piezas en el almacén
+                # Actualizar la cantidad de piezas en el almacén para crear la orden
                 self.warehouse.add_pieces(material, -piece_amount)
 
                 # Cerrar la ventana de Crear Orden con sus detalles y volver a la pantalla principal
@@ -467,8 +460,7 @@ class Application(tk.Frame):
                         new_piece_type = piece_type_combobox.get()
                         
                         if not new_piece_amount_str.isdigit() or new_piece_amount <= 0:
-                            messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico entero mayor que cero.")
-                            return
+                            messagebox.showerror("Error", "La cantidad de piezas debe ser un valor positivo.")
                         
                         # Obtener la orden seleccionada para modificar
                         selected_order = None
@@ -486,13 +478,16 @@ class Application(tk.Frame):
                             self.warehouse.add_pieces(selected_order.material, selected_order.piece_amount)
 
                              # Verificar si hay suficientes piezas en el almacén para realizar el cambio
-                            difference = new_piece_amount - selected_order.piece_amount
+                            difference =  selected_order.piece_amount - new_piece_amount
                             if difference > 0 and self.warehouse.get_pieces(new_material) < difference:
                                 messagebox.showerror("Error", "No hay suficientes piezas en el almacén para completar la modificación.")
                                 return
 
                             # Restar o agregar las piezas al almacén según corresponda
-                            self.warehouse.add_pieces(new_material, difference)
+                            if difference > 0:
+                                self.warehouse.add_pieces(new_material, difference)
+                            elif difference < 0:
+                                self.warehouse.add_pieces(new_material, -difference)
 
                         # Actualizar los datos de la orden con los cambios realizados
                         selected_order.piece_amount = new_piece_amount
@@ -506,8 +501,11 @@ class Application(tk.Frame):
                         modify_order_window.destroy()
                         self.master.deiconify()
 
-                    except ValueError:
-                        messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
+                    except ValueError as e:
+                        if "invalid literal for int()" in str(e):
+                            messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
+                        else:
+                            messagebox.showerror("Error", str(e))
 
                 #clear_fields()   
 
