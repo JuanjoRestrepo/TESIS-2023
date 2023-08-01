@@ -475,19 +475,21 @@ class Application(tk.Frame):
                         
                         if new_piece_amount != selected_order.piece_amount:
                             # Restar las piezas anteriores al almacén
-                            self.warehouse.add_pieces(selected_order.material, selected_order.piece_amount)
+                            difference =  selected_order.piece_amount - new_piece_amount
+                            if difference > 0:
+                                self.warehouse.add_pieces(new_material, difference)
+                            
+                            elif difference < 0:
+                                self.warehouse.add_pieces(new_material, difference)
 
                              # Verificar si hay suficientes piezas en el almacén para realizar el cambio
-                            difference =  selected_order.piece_amount - new_piece_amount
-                            if difference > 0 and self.warehouse.get_pieces(new_material) < difference:
+                            elif difference > 0 and self.warehouse.get_pieces(new_material) < difference:
                                 messagebox.showerror("Error", "No hay suficientes piezas en el almacén para completar la modificación.")
                                 return
 
                             # Restar o agregar las piezas al almacén según corresponda
-                            if difference > 0:
-                                self.warehouse.add_pieces(new_material, difference)
-                            elif difference < 0:
-                                self.warehouse.add_pieces(new_material, -difference)
+                            
+                            
 
                         # Actualizar los datos de la orden con los cambios realizados
                         selected_order.piece_amount = new_piece_amount
