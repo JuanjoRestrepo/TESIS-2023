@@ -221,13 +221,16 @@ class Application(tk.Frame):
                 if piece_amount <= 0:
                     # Si la entrada es un valor menor o igual a cero
                     raise ValueError("La cantidad de piezas debe ser un valor positivo.")
+                    clear_fields()
             
             except ValueError as e:
                 # Si la entrada es un valor NO NUMÉRICO
                 if "invalid literal for int()" in str(e):
                     messagebox.showerror("Error", "La cantidad de piezas debe ser un valor numérico.")
+                    clear_fields()
                 else:
                     messagebox.showerror("Error", str(e))
+                    clear_fields()
                 return
             
             # Verificar si hay suficientes piezas en el almacén
