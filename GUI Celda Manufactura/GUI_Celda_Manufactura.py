@@ -464,6 +464,7 @@ class Application(tk.Frame):
                         
                         if not new_piece_amount_str.isdigit() or new_piece_amount <= 0:
                             messagebox.showerror("Error", "La cantidad de piezas debe ser un valor positivo.")
+                            return
                         
                         # Obtener la orden seleccionada para modificar
                         selected_order = None
@@ -476,19 +477,19 @@ class Application(tk.Frame):
                             messagebox.showerror("Error", "La orden seleccionada no existe.")
                             return
                         
-                        if new_piece_amount != selected_order.piece_amount:
+                        if new_piece_amount != selected_order.piece_amount or new_material != selected_order.material:
                             # Restar las piezas anteriores al almacén según corresponda
-                            difference =  selected_order.piece_amount - new_piece_amount
-                            if difference > 0:
-                                self.warehouse.add_pieces(new_material, difference)
-                            
-                            elif difference < 0:
-                                self.warehouse.add_pieces(new_material, difference)
+                            self.warehouse.add_pieces(selected_order.material, selected_order.piece_amount)
 
-                             # Verificar si hay suficientes piezas en el almacén para realizar el cambio
-                            elif difference > 0 and self.warehouse.get_pieces(new_material) < difference:
-                                messagebox.showerror("Error", "No hay suficientes piezas en el almacén para completar la modificación.")
-                                return
+                            # Verificar si se ha cambiado el material de la orden
+                            if new_material != selected_order.material:
+                                # Restar las piezas del material anterior del almacén
+                                self.warehouse.add_pieces(new_material, -new_piece_amount)
+
+                                # Verificar si hay suficientes piezas en el almacén para realizar el cambio
+                                if self.warehouse.get_pieces(new_material) < new_piece_amount:
+                                    messagebox.showerror("Error", "No hay suficientes piezas en el almacén para completar la modificación.")
+                                    return
 
                         # Actualizar los datos de la orden con los cambios realizados
                         selected_order.piece_amount = new_piece_amount
