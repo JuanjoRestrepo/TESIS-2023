@@ -94,12 +94,12 @@ class Application(tk.Frame):
     def modify_order(self):
         # Lógica para modificar una orden aquí
         self.modify_order_screen()
-        print("Orden Modificada")
+        print("\nOrden Modificada")
     
     def modify_storage(self):
         # Lógica para modificar almacen
         self.modify_storage_screen()
-        print("Almacen Modificado")
+        print("\nAlmacen Modificado")
 
     def print_orders(self):
         print("\n===== Ordenes =====")
