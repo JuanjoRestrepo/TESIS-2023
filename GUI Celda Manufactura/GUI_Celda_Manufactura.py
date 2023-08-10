@@ -2,7 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
+import Coordinador_Main
 
+print("Coordinador Importado")
 
 class Order:
     def __init__(self, order_id, piece_amount, material, piece_type, date_created):
@@ -312,6 +314,8 @@ class Application(tk.Frame):
         order_frame.pack(side="top", pady=10)
         order_label = tk.Label(order_frame, text="Seleccione la Orden a Eliminar:")
         order_label.pack(side="left")
+
+        # TRAER LA LISTA DE ORDENES DESDE LA BASE CON EL COORDINADOR
         order_combobox = ttk.Combobox(order_frame, values=[order.order_id for order in self.orders])
         order_combobox.pack(side="left")
         
