@@ -102,13 +102,11 @@ class coordinator():
 
 
 
-        
-
-
-
-
+    
 run = coordinator()
 
 #run.Init_Process()
 
-run.crear('Aluminio',5,'piece1')
+run.create_order('Aluminio',5,'piece1')
+
+print("Coordinador Run")

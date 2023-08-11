@@ -4,11 +4,11 @@ import pandas as pd
 from neo4j import GraphDatabase
 from datetime import datetime
 
-
+# 192.168.1.251
 class graph():
 
     def __init__(self):
-        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("neo4j", "12345678") )
+        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("neo4j", "12345678") ) 
         self.session = conexion_DB.session()
 
     def relation(self,rel,typea,typeb,namea,nameb):
@@ -84,3 +84,14 @@ class graph():
 
 #run = graph()
 #run.create_order('Aluminio',5,'piece1')  
+
+
+
+"""
+
+Error 1 usando http
+
+raise ConfigurationError("URI scheme {!r} is not supported. Supported URI schemes are {}. Examples: bolt://host[:port] or neo4j://host[:port][?routing_context]".format(
+neo4j.exceptions.ConfigurationError: URI scheme 'http' is not supported. Supported URI schemes are ['bolt', 'bolt+ssc', 'bolt+s', 'neo4j', 'neo4j+ssc', 'neo4j+s']. Examples: bolt://host[:port] or neo4j://host[:port][?routing_context]
+
+"""
