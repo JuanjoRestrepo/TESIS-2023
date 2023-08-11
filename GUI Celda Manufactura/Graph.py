@@ -4,11 +4,11 @@ import pandas as pd
 from neo4j import GraphDatabase
 from datetime import datetime
 
-# 192.168.1.251
+
 class graph():
 
     def __init__(self):
-        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("neo4j", "12345678") ) 
+        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("neo4j", "12345678") )
         self.session = conexion_DB.session()
 
     def relation(self,rel,typea,typeb,namea,nameb):
@@ -25,7 +25,7 @@ class graph():
                 values.append(list(res.values()))
         return(keys,values)
 
-    def create_order (self,material,amount,piece):
+    def create_order (self,material,amount,piece,location):
         session = self.session
 
         # Crear un ID unico
@@ -33,7 +33,7 @@ class graph():
         order_id = material[0]+"P"+piece[-1]+"_"+str(date.year)+"_"+str(date.day)+"_"+str(date.month)+"_C"+str(amount) +"_H"+str(date.hour)+"_T"+str(date.minute) # Material + Pieza + Fecha + Cantidad + Hora
         
         # Crea orden
-        session.run("CREATE (order_"+ str(order_id) +":order {Name:'"+str(order_id)+"',Create_Date:'"+str(date)+"',Update_Date:'"+str(date)+"',End_Date:'',ID_Order:'"+str(order_id)+"',State:'Created',Amount:'"+str(amount)+"',Material:'"+str(material)+"', Piece:'"+str(piece)+"',Type_Error:''})")
+        session.run("CREATE (order_"+ str(order_id) +":order {Name:'"+str(order_id)+"',Create_Date:'"+str(date)+"',Update_Date:'"+str(date)+"',End_Date:'',ID_Order:'"+str(order_id)+"',State:'Created',Amount:'"+str(amount)+"',Material:'"+str(material)+"', Piece:'"+str(piece)+"',Type_Error:'',Amount_Error:'', Locations:'"+str(location)+"'})")
         
         # Relacion Orden con Piece
         self.relation('PIECE','order',piece,order_id,'ASRS Get Material')
@@ -64,7 +64,7 @@ class graph():
         session = self.session
         n = 0
         for i in property:
-            session.run("MATCH (n:"+ str(type)+"{Name:'"+ str(name)+"'})  SET n."+ str(i)+" = '"+ str(info[n])+"'")
+            session.run("MATCH (n:"+ str(type)+"{Name:'"+str(name)+"'})  SET n."+ str(i)+" = '"+ str(info[n])+"'")
             n += 1
 
     def create_relation_data(self,rel,data,typea,typeb,namea,nameb):
@@ -76,22 +76,17 @@ class graph():
         # Elimina un nodo a partir de su nombre 
         session = self.session
         session.run("MATCH (n:"+ str(type)+"{Name:'"+ str(name)+"'}) DETACH DELETE n")
+    
+    def delete_relation(self,rel,namea,nameb,typea,typeb):
+        session = self.session
+        session.run("MATCH (a:"+str(typea)+")-[r:"+str(rel)+"]->(b:"+str(typeb)+") WHERE a.Name= '"+str(namea)+"' AND b.Name= '"+str(nameb)+"' DELETE r" )
 
     def close(self):
         # Cierra sesión con Neo4j
         session = self.session
         session.close()
+    
 
-#run = graph()
+run = graph()
 #run.create_order('Aluminio',5,'piece1')  
-
-
-
-"""
-
-Error 1 usando http
-
-raise ConfigurationError("URI scheme {!r} is not supported. Supported URI schemes are {}. Examples: bolt://host[:port] or neo4j://host[:port][?routing_context]".format(
-neo4j.exceptions.ConfigurationError: URI scheme 'http' is not supported. Supported URI schemes are ['bolt', 'bolt+ssc', 'bolt+s', 'neo4j', 'neo4j+ssc', 'neo4j+s']. Examples: bolt://host[:port] or neo4j://host[:port][?routing_context]
-
-"""
+#run.delete_relation('PIECE','AP1_2023_10_8_C5_H18_T43','ASRS Get Material','order','piece1')
