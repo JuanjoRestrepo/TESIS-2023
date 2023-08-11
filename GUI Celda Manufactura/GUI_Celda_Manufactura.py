@@ -2,9 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
-import Coordinador_Main
 
-print("Coordinador Importado")
 
 class Order:
     def __init__(self, order_id, piece_amount, material, piece_type, date_created):
@@ -22,10 +20,10 @@ class Order:
         piece_type_code = self.piece_type[-1]
 
         # Obtener la fecha de creación
-        date_string = self.order_id.split("_")[1]
+        date_string = self.date_created.strftime("%Y_%d_%m")
 
         # Generar el nuevo ID
-        new_id = "{}P{}_{}_C{}".format(material_code, piece_type_code, date_string, self.piece_amount)
+        new_id = "{}P{}_{}_C{}_H{}_T{}".format(material_code, piece_type_code, date_string, self.piece_amount, self.date_created.hour, self.date_created.minute)
         self.order_id = new_id
 
     
@@ -241,12 +239,13 @@ class Application(tk.Frame):
                 date_created = datetime.now()
 
                 #Convertimos la fecha de formato <class 'datetime.datetime'> a formato <string>
-                date_string = date_created.strftime("%Y-%m-%d")
-                order_id = "{}P{}_{}_C{}".format(material[0], piece_type[-1], date_string, piece_amount)
+                date_string = date_created.strftime("%Y_%d_%m")
+                
+                ID_Generado = "{}P{}_{}_C{}_H{}_T{}".format(material[0], piece_type[-1], date_string, piece_amount, date_created.hour, date_created.minute)
 
                 # Crear una instancia de la clase Order con los datos ingresados
-                NewOrder = Order(order_id, piece_amount, material, piece_type, date_created)
-                
+                NewOrder = Order(ID_Generado, piece_amount, material, piece_type, date_created)
+                            
                 # Agregar la orden a la lista de órdenes
                 self.orders.append(NewOrder)
 
