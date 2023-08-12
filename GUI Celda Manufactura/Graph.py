@@ -8,7 +8,7 @@ from datetime import datetime
 class graph():
 
     def __init__(self):
-        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("prueba", "12345678") )
+        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("neo4j", "12345678") )
         self.session = conexion_DB.session()
 
     def relation(self,rel,typea,typeb,namea,nameb):
@@ -88,5 +88,13 @@ class graph():
     
 
 run = graph()
-#run.create_order('Aluminio',5,'piece1')  
-#run.delete_relation('PIECE','AP1_2023_10_8_C5_H18_T43','ASRS Get Material','order','piece1')
+print("Conectado a la Base")
+#orden_creada = run.create_order('Aluminio',1,'piece2', "[10,12]")  
+#print("Orden Creada:\n", orden)
+
+#run.delete_relation('PIECE','AP1_2023_11_8_C1_H22_T8','ASRS Get Material','order','piece1')
+
+#orden_eliminada = run.delete_relation("PIECE", "AP2_2023_11_8_C1_H22_T38", "ASRS Get Material", "piece2", "MACHINE")
+#orden = run.get_data("piece1")  rel,namea,nameb,typea,typeb
+
+#print("\nOrden Eliminada\n\n", orden_eliminada)
