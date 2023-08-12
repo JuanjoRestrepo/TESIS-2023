@@ -112,7 +112,7 @@ class coordinator():
         used = eval(disponible[self.Find_Index_Key(keys[0],use)]) # Usadas
         
         if (int(available[pos]) == 0) or (int(available[pos])< amount):
-            return('Lo lamento, no es posible crear la orden por falta de material')
+            return(False,"")
         
         else:
             # Update locations
@@ -128,7 +128,7 @@ class coordinator():
             data = base.create_order(material,amount,piece,location)
             dash.Add_End(data,'Ordenes')
             
-            return('La orden fue creada con el ID:',data[0])
+            return(True,data)
         
         
     def delete_order(self,ID):
@@ -327,7 +327,7 @@ run = coordinator()
 
 #run.Init_Process()
 #print(run.get_ID())
-print(run.information_order('AP1_2023_10_8_C5_H18_T22'))
+#print(run.information_order('AP1_2023_10_8_C5_H18_T22'))
 #print(run.get_storage())
 #print(run.get_orders())
 #print(run.create_order('Aluminio',3,'piece1'))

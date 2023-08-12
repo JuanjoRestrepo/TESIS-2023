@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 from datetime import datetime
-
+from Coordinador_Main import coordinator 
 
 class Order:
     def __init__(self, order_id, piece_amount, material, piece_type, date_created):
@@ -26,7 +26,6 @@ class Order:
         new_id = "{}P{}_{}_C{}_H{}_T{}".format(material_code, piece_type_code, date_string, self.piece_amount, self.date_created.hour, self.date_created.minute)
         self.order_id = new_id
 
-    
     def __str__(self):
         return f"ID de Orden: {self.order_id}"
     
@@ -62,6 +61,7 @@ class Application(tk.Frame):
         self.master.geometry("600x400+{}+{}".format(x, y))
         self.master.title("Celda de Manufactura")
         self.pack()
+        self.coordinator = coordinator() # Inicializa el objeto coordinator
         self.create_widgets()
 
     def create_widgets(self):
@@ -183,7 +183,7 @@ class Application(tk.Frame):
         piece_type_frame.pack(side="top", pady=10)
         piece_type_label = tk.Label(piece_type_frame, text="Tipo de Pieza:")
         piece_type_label.pack(side="left")
-        piece_type_combobox = ttk.Combobox(piece_type_frame, values=["Pieza1", "Pieza2", "Pieza3"])
+        piece_type_combobox = ttk.Combobox(piece_type_frame, values=["piece1", "piece2", "piece3"])
         piece_type_combobox.pack(side="left")
 
         def clear_fields():
@@ -221,7 +221,6 @@ class Application(tk.Frame):
                 if piece_amount <= 0:
                     # Si la entrada es un valor menor o igual a cero
                     raise ValueError("La cantidad de piezas debe ser un valor positivo.")
-                    clear_fields()
             
             except ValueError as e:
                 # Si la entrada es un valor NO NUMÉRICO
@@ -233,6 +232,7 @@ class Application(tk.Frame):
                     clear_fields()
                 return
             
+            """
             # Verificar si hay suficientes piezas en el almacén
             if self.warehouse.get_pieces(material) >= piece_amount:
                 # Crear el ID de la orden y la fecha de creación
@@ -291,7 +291,41 @@ class Application(tk.Frame):
                 # Mostrar mensaje de error si no hay suficientes piezas en el almacén
                 messagebox.showerror("Error", "No hay suficientes piezas de {} en el almacén.".format(material))
                 clear_fields()
-        
+            """
+
+            confirmation,order_details = self.coordinator.create_order(material, piece_type, piece_amount)
+
+            if confirmation == True:
+                #messagebox.showinfo("Orden Creada", "La orden se ha creado exitosamente.")
+                order_details_window = tk.Toplevel(create_order_window)
+                order_details_window.title("Detalles de la Orden")
+                order_details_window.geometry("400x250")
+
+                order_id_label = tk.Label(order_details_window, text="ID de la Orden: {}".format(order_details[0]))
+                order_id_label.pack()
+                
+                date_created_label = tk.Label(order_details_window, text="Fecha de Creación: {}".format(order_details[1]))
+                date_created_label.pack()
+
+                piece_amount_label = tk.Label(order_details_window, text="Cantidad de Piezas: {}".format(order_details[5]))
+                piece_amount_label.pack()
+                
+                material_label = tk.Label(order_details_window, text="Tipo de Material: {}".format(order_details[4]))
+                material_label.pack()
+
+                piece_type_label = tk.Label(order_details_window, text="Tipo de Pieza: {}".format(order_details[3]))
+                piece_type_label.pack()
+                
+                close_button = tk.Button(order_details_window, text="Cerrar", command=order_details_window.destroy)
+                close_button.pack()
+            
+            else:
+                # Mostrar mensaje de error si no hay suficientes piezas en el almacén
+                messagebox.showerror("Error", "No hay suficientes piezas de {} en el almacén.".format(material))
+
+            clear_fields()
+            create_order_window.destroy()
+            #self.update_order_list()
         # Botón para crear la orden
         create_order_button = tk.Button(create_order_window, text="Crear Orden", command=create_order)
         create_order_button.pack(side="bottom", pady=10)

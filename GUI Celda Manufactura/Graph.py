@@ -8,7 +8,7 @@ from datetime import datetime
 class graph():
 
     def __init__(self):
-        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("neo4j", "12345678") )
+        conexion_DB = GraphDatabase.driver(uri = "bolt://localhost:7687", auth = ("prueba", "12345678") )
         self.session = conexion_DB.session()
 
     def relation(self,rel,typea,typeb,namea,nameb):
