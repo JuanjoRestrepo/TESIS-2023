@@ -50,8 +50,12 @@ class graph():
     def get_data(self,type):
         # Trae la información de un nodo
         session = self.session
-        info = session.run("MATCH (n:"+ str(type)+") RETURN n AS "+ str(type))
-        return (self.Separate_dict(info.data()))
+        info = session.run("MATCH (n:" + str(type) + ") RETURN n AS " + str(type))
+        data = self.Separate_dict(info.data())
+        
+        # Crear un DataFrame de pandas
+        df = pd.DataFrame(data[1], columns=data[0])
+        return df
     
     def get_data_relation(self,typea,namea,typeb,nameb,rel):
         # Trae la información dentro de la relación entre nodos
@@ -81,20 +85,56 @@ class graph():
         session = self.session
         session.run("MATCH (a:"+str(typea)+")-[r:"+str(rel)+"]->(b:"+str(typeb)+") WHERE a.Name= '"+str(namea)+"' AND b.Name= '"+str(nameb)+"' DELETE r" )
 
+
     def close(self):
         # Cierra sesión con Neo4j
         session = self.session
         session.close()
     
 
-run = graph()
-print("Conectado a la Base")
-#orden_creada = run.create_order('Aluminio',1,'piece2', "[10,12]")  
-#print("Orden Creada:\n", orden)
 
+run = graph()
+
+# ============= Crear el nodo CNC_Lathe con sus propiedades =============
+#run.session.run("CREATE (n:machine {Name: 'CNC_Lathe', Create_Date: '08/03/2023', Update_Date: '08/03/2023', Maintenance_Date: '4/11/2025', Data_Machine: 'Denford', State: 'Avalaible', Station: 'Lathe'})")
+#print("Created CNC_Lathe node")
+
+
+# ============= Crear relaciones con los nodos CNC Lathe Activate de tipo piece1 y piece2 =============
+#run.relation("MACHINE", "piece1", "machine", "CNC Lathe Activate", "CNC_Lathe")
+#run.relation("MACHINE", "piece2", "machine", "CNC Lathe Activate", "CNC_Lathe")
+#run.relation("MACHINE", "piece3", "machine", "CNC Lathe Activate", "CNC_Lathe")
+#print("Created relationships for CNC_Lathe node")
+
+
+# ============= Obtener datos de las máquinas y mostrar solo una fila de encabezados =============
+#machine_data = run.get_data("machine")
+#print("Machine Data:")
+#print(machine_data.to_string(header=False))
+
+
+# ============= Cambiar Estado de un Nodo (Machine) =============
+#new_state = "Available"
+#run.update_data("CNC_Lathe", "machine", [new_state], ["State"])
+#print("Updated State of CNC_Lathe to", new_state)
+
+
+# ============= Eliminar Nodo =============
+#run.delete_node("machine", "CNC_Lathe")
+#print("Deleted CNC_Lathe node")
+
+# ============= Eliminar Relación =============
+#run.delete_relation("MACHINE", "CNC Lathe Activate", "CNC_Lathe", "piece1", "machine")
 #run.delete_relation('PIECE','AP1_2023_11_8_C1_H22_T8','ASRS Get Material','order','piece1')
 
-#orden_eliminada = run.delete_relation("PIECE", "AP2_2023_11_8_C1_H22_T38", "ASRS Get Material", "piece2", "MACHINE")
-#orden = run.get_data("piece1")  rel,namea,nameb,typea,typeb
 
-#print("\nOrden Eliminada\n\n", orden_eliminada)
+
+
+
+
+
+#orden_eliminada = run.delete_relation("PIECE", "AP2_2023_11_8_C1_H22_T38", "ASRS Get Material", "piece2", "MACHINE")
+#print("\nOrden Eliminada")
+
+#ordenes_obtenidas = run.get_data("piece1")  #rel,namea,nameb,typea,typeb
+#print("\n\nOrdenes Obtenidas piece1\n\n", ordenes_obtenidas)
