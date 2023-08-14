@@ -50,12 +50,8 @@ class graph():
     def get_data(self,type):
         # Trae la información de un nodo
         session = self.session
-        info = session.run("MATCH (n:" + str(type) + ") RETURN n AS " + str(type))
-        data = self.Separate_dict(info.data())
-        
-        # Crear un DataFrame de pandas
-        df = pd.DataFrame(data[1], columns=data[0])
-        return df
+        info = session.run("MATCH (n:"+ str(type)+") RETURN n AS "+ str(type))
+        return (self.Separate_dict(info.data()))
     
     def get_data_relation(self,typea,namea,typeb,nameb,rel):
         # Trae la información dentro de la relación entre nodos
@@ -85,16 +81,13 @@ class graph():
         session = self.session
         session.run("MATCH (a:"+str(typea)+")-[r:"+str(rel)+"]->(b:"+str(typeb)+") WHERE a.Name= '"+str(namea)+"' AND b.Name= '"+str(nameb)+"' DELETE r" )
 
-
     def close(self):
         # Cierra sesión con Neo4j
         session = self.session
         session.close()
-    
-
 
 run = graph()
-
+print("Conectado a Base desde Graph")
 # ============= Crear el nodo CNC_Lathe con sus propiedades =============
 #run.session.run("CREATE (n:machine {Name: 'CNC_Lathe', Create_Date: '08/03/2023', Update_Date: '08/03/2023', Maintenance_Date: '4/11/2025', Data_Machine: 'Denford', State: 'Avalaible', Station: 'Lathe'})")
 #print("Created CNC_Lathe node")
