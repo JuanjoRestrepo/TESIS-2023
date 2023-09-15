@@ -15,64 +15,96 @@ class coordinator():
 
 
     # ACCIONES CELDA DE MANUFACTURA
-    def Init_Process(self):
+    def Start_Process(self):
         dash = self.dash
         #robot = self.robot
         base = self.base
 
         # Bring all the nodes type order with status Created
-        orders_keys,orders_values = base.get_data_especific('order','State','Created')
-        
+        orders_keys,orders_values = base.get_data_especific('order','State','Running')
         # If we dont have orders to run, notified
         #if len(orders) == 0:
         #    return("Lo lamento, en este momento no hay ninguna orden para ejecutar")
 
         # Run the steps of the order created
+        
         for order in orders_values:
 
-            material = order[self.Find_Index_Key(orders_keys[0],'Material')]
+            locations = eval(order[self.Find_Index_Key(orders_keys[0],'Locations')])
             ID = order[self.Find_Index_Key(orders_keys[0],'ID_Order')]
-            
+            amount = order[self.Find_Index_Key(orders_keys[0],'Amount')]
+            piece = order[self.Find_Index_Key(orders_keys[0],'Piece')]
+            steps,files,stations = base.get_steps(piece)
+
             # Update data
             base.update_data(ID,'order',['Running'],['State'])
             dash.Modified_Row(ID,'Running','Ordenes',1,8)
+            
+            progress = [0]*len(steps)
 
-            if (material == 'Empack'):
-                loc = 'Location_E'
-            else:
-                loc = 'Location_A'
-        
+            if progress[-1] != amount:
 
-            #Bring the location to run the ASRS
 
-            storage = base.get_data('storage')
-            #locations = storage[self.Find_Index_Key(storage.keys(),loc)]
-            print(storage.keys)
-            # cantidades
-            # How many steps are needed
-            # Run the steps
-            # Update data
-            #TENER EN CUENTA LA CANTIDAD DE PIEZAS A HACER
 
-    def Stop_Process(self):
-        pass
+            def run_process(process,files,number):
+                """
+                 if (i+1) == 1:
+                    # Corro 1
+                    with ProcessPoolExecutor() as executor:
+                    # Inicia los scripts en paralelo
+                    future1 = executor.submit(script1)
+                    future2 = executor.submit(script2)
+                    # Espera a que los scripts terminen
+                    resultado1 = future1.result()
+                    resultado2 = future2.result()
+                    
+                    #num_piece = amount - 1
+                    pass
+                elif (i+1)== 2:
+                    # Corro 2 Scripts
+                    pass
+                elif (i+1) == 3:
+                    # Corro 3
+                    pass
+                elif (i+1) == 4:
+                    # Corro 4
+                    pass
+                else:
+                    # Corro 5
+                    pass
+                """
+                pass
+
+
+            if amount != 0:
+                for i in range(len(steps)):
+                   pass
+
+
+           
+
+                
     
     def get_orders(self): # Show all the orders
         base = self.base
         key,orders = base.get_data('order')
+        f_orders =[]
 
-        amount = eval(orders[self.Find_Index_Key(key[0],'Amount')])
-        material = eval(orders[self.Find_Index_Key(key[0],'Material')])
-        ID = eval(orders[self.Find_Index_Key(key[0],'ID_Order')])
-        piece = eval(orders[self.Find_Index_Key(key[0],'Piece')])
-        date = eval(orders[self.Find_Index_Key(key[0],'Create_Date')])
-        state= eval(orders[self.Find_Index_Key(key[0],'State')])
+        for i in orders:
+            amount = i[self.Find_Index_Key(key[0],'Amount')]
+            material = i[self.Find_Index_Key(key[0],'Material')]
+            ID = i[self.Find_Index_Key(key[0],'ID_Order')]
+            piece = i[self.Find_Index_Key(key[0],'Piece')]
+            date = i[self.Find_Index_Key(key[0],'Create_Date')]
+            state= i[self.Find_Index_Key(key[0],'State')]
 
-        return([ID,amount,material,piece,date,state])
+            f_orders.append([ID,amount,material,piece,date,state])
+        return(f_orders)
     
     def information_order(self,ID): # Get an especific order node
         base = self.base
         key,order = base.get_data_especific('order','Name',ID)
+
         return(key[0],order[0])
 
     def get_ID(self): # Get all the order IDs with state created
@@ -94,24 +126,16 @@ class coordinator():
     def create_order(self,material,piece,amount):
         dash = self.dash
         base = self.base
-        keys,values= base.get_data('storage')
-
-		# TRAER UBICACIONES
-        if (material == 'Empack'):
-            pos = 0
-            loc ='Location_E'
-            use = 'Used_E'
-        else:
-            pos = 1
-            loc ='Location_A'
-            use = 'Used_A'
+        keys,values= base.get_data_especific('material','Name',material)
         
         disponible = values[0]
-        available = eval(disponible[self.Find_Index_Key(keys[0],'Available')]) # valor cantidad disponible material
-        locations = eval(disponible[self.Find_Index_Key(keys[0],loc)]) # Ubicaciones
-        used = eval(disponible[self.Find_Index_Key(keys[0],use)]) # Usadas
         
-        if (int(available[pos]) == 0) or (int(available[pos])< amount):
+        available = eval(disponible[self.Find_Index_Key(keys[0],'Available')]) # valor cantidad disponible material
+        locations = eval(disponible[self.Find_Index_Key(keys[0],'Location')]) # Ubicaciones
+        used = eval(disponible[self.Find_Index_Key(keys[0],'Used')]) # Usadas
+        
+        
+        if (int(available == 0) or (int(available)< amount)):
             return(False,"")
         
         else:
@@ -119,11 +143,10 @@ class coordinator():
             location = locations[0:amount]
             del locations[0:amount]
             used.extend(location)
-            available[pos] = int(available[pos]) - amount
+            available = int(available) - amount
             
-            base.update_data('Storage','storage',[available,locations,used,str(datetime.now())],['Available',loc,use,'Update_Date'])
+            base.update_data(material,'material',[available,locations,used,str(datetime.now())],['Available','Location','Used','Update_Date'])
             
-
             # Create and Update Order
             data = base.create_order(material,amount,piece,location)
             dash.Add_End(data,'Ordenes')
@@ -138,72 +161,69 @@ class coordinator():
         # Bring order information
         order_k,order_v = self.information_order(ID)
         amount = eval(order_v[self.Find_Index_Key(order_k,'Amount')])
-        material = eval(order_v[self.Find_Index_Key(order_k,'Material')])
-        location =  eval(order_v[self.Find_Index_Key(order_k,'Locations')])
+        material = order_v[self.Find_Index_Key(order_k,'Material')]
+        location =  order_v[self.Find_Index_Key(order_k,'Locations')]
 
-        # Bring storage information
-        keys,values= base.get_data('storage')
-
-		# Validate material case
-        if (material == 'Empack'):
-            pos = 0
-            loc ='Location_E'
-            use = 'Used_E'
-        else:
-            pos = 1
-            loc ='Location_A'
-            use = 'Used_A'
+        # Bring materials information
+        keys,values= base.get_data_especific('material','Name',material)
         
-        # Update the material available
         disponible = values[0]
         available = eval(disponible[self.Find_Index_Key(keys[0],'Available')]) # valor cantidad disponible material
-        locations = eval(disponible[self.Find_Index_Key(keys[0],loc)]) # Ubicaciones
-        used = eval(disponible[self.Find_Index_Key(keys[0],use)]) # Usadas
+        locations = eval(disponible[self.Find_Index_Key(keys[0],'Location')]) # Ubicaciones
+        used = eval(disponible[self.Find_Index_Key(keys[0],'Used')]) # Usadas
 
-        available[pos] = int(available[pos]) + amount
+        available= int(available) + amount
         locations.extend(eval(location))
         new_used = [valor for valor in used if valor not in eval(location)]
 
         locations =sorted(locations, key=lambda x: (x[0], x[1]))
         
         # Update data information
-        base.update_data('Storage','storage',[available,locations,new_used,str(datetime.now())],['Available',loc,use,'Update_Date'])
+        base.update_data(material,'material',[available,locations,new_used,str(datetime.now())],['Available','Location','Used','Update_Date'])
         
         # Delete order in data and dashboard
         base.delete_node('order',ID)
         dash.Delete_Row(ID,'Ordenes')
 
-        return('La orden'+str(ID)+'fue eliminada con éxito')
+        return('La orden '+str(ID)+' fue eliminada con éxito')
 
     def modify_order(self,ID,piece,material,amount,cpiece,cmaterial,camount):
         # PREGUNTAR SI ES NECESARIO MODIFICAR EL ID
         dash = self.dash
         base = self.base
-
+        
         # Bring order information
         order_k,order_v = self.information_order(ID)
-        last_amount = eval(order_v[self.Find_Index_Key(order_k,'Amount')])
-        last_material = eval(order_v[self.Find_Index_Key(order_k,'Material')])
-        last_piece = eval(order_v[self.Find_Index_Key(order_k,'Piece')])
-        location =  eval(order_v[self.Find_Index_Key(order_k,'Locations')])
+        last_amount = int(order_v[self.Find_Index_Key(order_k,'Amount')])
+        last_material = order_v[self.Find_Index_Key(order_k,'Material')]
+        last_piece = order_v[self.Find_Index_Key(order_k,'Piece')]
+        location =  order_v[self.Find_Index_Key(order_k,'Locations')]
 
-        keys,values= base.get_data('storage')
-        disponible = values[0]
-        available = eval(disponible[self.Find_Index_Key(keys[0],'Available')]) # valor cantidad disponible material
-        locations_E = eval(disponible[self.Find_Index_Key(keys[0],'Location_E')]) # Ubicaciones
-        locations_A = eval(disponible[self.Find_Index_Key(keys[0],'Location_A')])
-        used_E = eval(disponible[self.Find_Index_Key(keys[0],'Used_E')]) # Usadas
-        used_A = eval(disponible[self.Find_Index_Key(keys[0],'Used_A')]) 
+        key_E,value_E= base.get_data_especific('material','Name','Empack')
+        available_E = int(value_E[0][self.Find_Index_Key(key_E[0],'Available')]) # valor cantidad disponible material
+        locations_E = eval(value_E[0][self.Find_Index_Key(key_E[0],'Location')]) # Ubicaciones
+        used_E = eval(value_E[0][self.Find_Index_Key(key_E[0],'Used')]) # Usadas
+
+        key_A,value_A= base.get_data_especific('material','Name','Aluminio')
+        available_A = int(value_A[0][self.Find_Index_Key(key_A[0],'Available')]) # valor cantidad disponible material
+        locations_A = eval(value_A[0][self.Find_Index_Key(key_A[0],'Location')]) # Ubicaciones
+        used_A = eval(value_A[0][self.Find_Index_Key(key_A[0],'Used')]) # Usadas
+        
+        if cpiece:
+            base.delete_relation('PIECE',ID,last_piece,'order',last_piece)
+            base.relation('PIECE','order',piece,ID,piece)
+            base.update_data(ID,'order',[piece,str(datetime.now())],['Piece','Update_Date'])
+            dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
 
         if cmaterial & (not camount):  # If the material change but the amount not
             if last_material == 'Empack':
-                if available[1]==0 or available[1]< amount :
+                if available_A==0 or available_A< amount :
                     return('Lo lamento no se puede modificar la orden por falta de material')
                 else:
                     locations = locations_A[0:amount]
 
-                    available[0] = int(available[0]) + amount   
-                    available[1] = int(available[1]) - amount   
+                    available_A = int(available_A) - amount   
+                    available_E = int(available_E) + amount   
 
                     locations_E.extend(eval(location))
                     locations_E = sorted(locations_E, key=lambda x: (x[0], x[1]))
@@ -213,21 +233,21 @@ class coordinator():
                     used_A = sorted(used_A, key=lambda x: (x[0], x[1]))
                     used_E = [valor for valor in used_E if valor not in eval(location)]
 
-                    base.update_data('Storage','storage',[available,locations_E,locations_A,used_E,used_A,str(datetime.now())],['Available','Location_E','Location_A','Used_E','Used_A','Update_Date'])
-                    base.update_data(ID,'order',[piece,material,amount,locations,str(datetime.now())],['Piece','Material','Amount','Locations','Update_Date'])
+                    base.update_data('Empack','material',[available_E,locations_E,used_E,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data('Aluminio','material',[available_A,locations_A,used_A,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data(ID,'order',[material,amount,locations,str(datetime.now())],['Material','Amount','Locations','Update_Date'])
                     dash.Modified_Row(ID,material,'Ordenes',1,4) #material
-                    dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
-                    return('La orden'+str(ID)+'fue modificada con éxito')
+                    return('La orden '+str(ID)+' fue modificada con éxito')
 
             else:
 
-                if available[0]==0 or available[0]< amount :
+                if available_E==0 or available_E< amount :
                     return('Lo lamento no se puede modificar la orden por falta de material')
                 else:
                     locations = locations_E[0:amount]
 
-                    available[0] = int(available[0]) - amount   
-                    available[1] = int(available[1]) + amount   
+                    available_A = int(available_A) + amount   
+                    available_E = int(available_E) - amount   
 
                     locations_A.extend(eval(location))
                     locations_A = sorted(locations_A, key=lambda x: (x[0], x[1]))
@@ -237,15 +257,15 @@ class coordinator():
                     used_E = sorted(used_E, key=lambda x: (x[0], x[1]))
                     used_A = [valor for valor in used_A if valor not in eval(location)]
 
-                    base.update_data('Storage','storage',[available,locations_E,locations_A,used_E,used_A,str(datetime.now())],['Available','Location_E','Location_A','Used_E','Used_A','Update_Date'])
-                    base.update_data(ID,'order',[piece,material,amount,locations,str(datetime.now())],['Piece','Material','Amount','Locations','Update_Date'])
+                    base.update_data('Empack','material',[available_E,locations_E,used_E,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data('Aluminio','material',[available_A,locations_A,used_A,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data(ID,'order',[material,amount,locations,str(datetime.now())],['Material','Amount','Locations','Update_Date'])
                     dash.Modified_Row(ID,material,'Ordenes',1,4) #material
-                    dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
-                    return('La orden'+str(ID)+'fue modificada con éxito')
+                    return('La orden '+str(ID)+' fue modificada con éxito')
         
         if camount & (not cmaterial):  # If the amount change but the material not
             if last_material == 'Empack':
-                if available[0]==0 or (available[0]+last_amount) < amount :
+                if available_E==0 or (available_E+last_amount) < amount :
                     return('Lo lamento no se puede modificar la orden por falta de material')
                 else:
                     locations_E.extend(eval(location))
@@ -253,22 +273,22 @@ class coordinator():
                     locations = locations_E[0:amount]
                     del locations_E[0:amount]
 
-                    available[0] = int(available[0]) + last_amount- amount   
+                    available_E = int(available_E) + last_amount- amount   
 
                     
                     used_E = [valor for valor in used_E if valor not in eval(location)]
                     used_E.extend(locations)
                     used_E = sorted(used_E, key=lambda x: (x[0], x[1]))
 
-                    base.update_data('Storage','storage',[available,locations_E,used_E,str(datetime.now())],['Available','Location_E','Used_E','Update_Date'])
-                    base.update_data(ID,'order',[piece,material,amount,locations,str(datetime.now())],['Piece','Material','Amount','Locations','Update_Date'])
+                    base.update_data('Empack','material',[available_E,locations_E,used_E,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data(ID,'order',[material,amount,locations,str(datetime.now())],['Material','Amount','Locations','Update_Date'])
                     dash.Modified_Row(ID,amount,'Ordenes',1,6) #amount
-                    dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
-                    return('La orden'+str(ID)+'fue modificada con éxito')
+                    dash.Modified_Row(ID,material,'Ordenes',1,4) #material
+                    return('La orden '+str(ID)+' fue modificada con éxito')
 
             else:
 
-                if available[1]==0 or (available[1]+last_amount) < amount :
+                if available_A==0 or (available_A+last_amount) < amount :
                     return('Lo lamento no se puede modificar la orden por falta de material')
                 else:
                     locations_A.extend(eval(location))
@@ -276,41 +296,44 @@ class coordinator():
                     locations = locations_A[0:amount]
                     del locations_A[0:amount]
 
-                    available[0] = int(available[0]) + last_amount- amount   
+                    available_A = int(available_A) + last_amount- amount   
 
                     
                     used_A = [valor for valor in used_A if valor not in eval(location)]
                     used_A.extend(locations)
                     used_A = sorted(used_A, key=lambda x: (x[0], x[1]))
 
-                    base.update_data('Storage','storage',[available,locations_A,used_A,str(datetime.now())],['Available','Location_A','Used_A','Update_Date'])
-                    base.update_data(ID,'order',[piece,material,amount,locations,str(datetime.now())],['Piece','Material','Amount','Locations','Update_Date'])
+                    base.update_data('Aluminio','material',[available_A,locations_A,used_A,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data(ID,'order',[material,amount,locations,str(datetime.now())],['Material','Amount','Locations','Update_Date'])
                     dash.Modified_Row(ID,amount,'Ordenes',1,6) #amount
-                    dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
+                    dash.Modified_Row(ID,material,'Ordenes',1,4) #material
                     return('La orden'+str(ID)+'fue modificada con éxito')
         
         if camount & cmaterial:  # If both changed
             if last_material == 'Empack':
-                if available[0]==0 or (available[0]+last_amount) < amount :
+                if available_A==0 or available_A< amount :
                     return('Lo lamento no se puede modificar la orden por falta de material')
                 else:
                     locations_E.extend(eval(location))
                     locations_E = sorted(locations_E, key=lambda x: (x[0], x[1]))
-                    locations = locations_E[0:amount]
-                    del locations_E[0:amount]
 
-                    available[0] = int(available[0]) + last_amount- amount   
+                    locations = locations_A[0:amount]
+                    del locations_A[0:amount]
+
+                    available_A = int(available_A) - amount   
+                    available_E = int(available_E) + last_amount  
 
                     
+                    used_A.extend(locations)
+                    used_A = sorted(used_E, key=lambda x: (x[0], x[1]))
                     used_E = [valor for valor in used_E if valor not in eval(location)]
-                    used_E.extend(locations)
-                    used_E = sorted(used_E, key=lambda x: (x[0], x[1]))
 
-                    base.update_data('Storage','storage',[available,locations_E,used_E,str(datetime.now())],['Available','Location_E','Used_E','Update_Date'])
-                    base.update_data(ID,'order',[piece,material,amount,locations,str(datetime.now())],['Piece','Material','Amount','Locations','Update_Date'])
+                    base.update_data('Empack','material',[available_E,locations_E,used_E,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data('Aluminio','material',[available_A,locations_A,used_A,str(datetime.now())],['Available','Location','Used','Update_Date'])
+                    base.update_data(ID,'order',[material,amount,locations,str(datetime.now())],['Material','Amount','Locations','Update_Date'])
                     dash.Modified_Row(ID,amount,'Ordenes',1,6) #amount
-                    dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
-                    return('La orden'+str(ID)+'fue modificada con éxito')
+                    dash.Modified_Row(ID,material,'Ordenes',1,4) #material
+                    return('La orden '+str(ID)+' fue modificada con éxito')
 
             else:
                 pass
@@ -325,13 +348,13 @@ class coordinator():
 
 run = coordinator()
 
-#run.Init_Process()
+run.Start_Process()
 #print(run.get_ID())
-#print(run.information_order('AP1_2023_10_8_C5_H18_T22'))
+#print(run.information_order('AP1_2023_30_8_C5_H11_T33'))
 #print(run.get_storage())
 #print(run.get_orders())
-#print(run.create_order('Aluminio',3,'piece1'))
-#print(run.create_order('Empack',5,'piece2'))
+#print(run.create_order('Aluminio',"Piece1",3))
+#print(run.create_order('Empack',"Piece2",5))
 #print(run.delete_order('AP1_2023_10_8_C5_H18_T22',5,'Aluminio','[[1, 1], [1, 2], [2, 1], [2, 2], [3, 1]]'))
-#run.get_orders()
+#print(run.get_orders())
 #print(run.modify_order('EP2_2023_10_8_C5_H21_T0','piece2','Empack',2,'piece2','Empack',3,False,False,True,'[[1, 3], [1, 4], [1, 5], [2, 3], [2, 4]]'))
