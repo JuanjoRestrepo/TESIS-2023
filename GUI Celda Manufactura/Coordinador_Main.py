@@ -1,30 +1,33 @@
 import Graph
 import Dashboard
-import Run_Stations
+import Robot_Simulation
 from datetime import datetime
 
 class coordinator():
 
     def __init__(self):
         self.base = Graph.graph()
+        #self.robot = Robot_Simulation.Simulation()
         self.dash = Dashboard.dashboard()
 
     def Find_Index_Key(self,data,valor):
         return(data.index(valor))
 
+
     # ACCIONES CELDA DE MANUFACTURA
     def Start_Process(self):
         dash = self.dash
-        robot = self.stations
+        #robot = self.robot
         base = self.base
 
         # Bring all the nodes type order with status Created
-        orders_keys,orders_values = base.get_data_especific('order','State','Created')
+        orders_keys,orders_values = base.get_data_especific('order','State','Running')
         # If we dont have orders to run, notified
-        if len(orders_values) == 0:
-            return("Lo lamento, en este momento no hay ninguna orden para ejecutar")
+        #if len(orders) == 0:
+        #    return("Lo lamento, en este momento no hay ninguna orden para ejecutar")
 
         # Run the steps of the order created
+        
         for order in orders_values:
 
             locations = eval(order[self.Find_Index_Key(orders_keys[0],'Locations')])
@@ -36,47 +39,52 @@ class coordinator():
             # Update data
             base.update_data(ID,'order',['Running'],['State'])
             dash.Modified_Row(ID,'Running','Ordenes',1,8)
-            create = 1
+            
             progress = [0]*len(steps)
 
             if progress[-1] != amount:
 
-                if (create <= len(steps)) and (create <= amount):
-                    finish = Run_Stations.run_process(ID,files[:create],locations[0])
-                    if finish:
-                        for n in range(create):
-                            progress[n]=+1
-                        create=+1
-                        locations.pop(0)
-                    else:
-                        #COMPLETAR LOGICA DE ERROR
-                        return("Se presento un ERROR en la ejecución")
 
+
+            def run_process(process,files,number):
+                """
+                 if (i+1) == 1:
+                    # Corro 1
+                    with ProcessPoolExecutor() as executor:
+                    # Inicia los scripts en paralelo
+                    future1 = executor.submit(script1)
+                    future2 = executor.submit(script2)
+                    # Espera a que los scripts terminen
+                    resultado1 = future1.result()
+                    resultado2 = future2.result()
                     
+                    #num_piece = amount - 1
+                    pass
+                elif (i+1)== 2:
+                    # Corro 2 Scripts
+                    pass
+                elif (i+1) == 3:
+                    # Corro 3
+                    pass
+                elif (i+1) == 4:
+                    # Corro 4
+                    pass
                 else:
-                    if progress[0] != amount:
-                        finish = Run_Stations.run_process(ID,files[:len(steps)],locations[0])
-                        if finish:
-                            for n in range(len(progress)):
-                                progress[n]=+1
-                            if len(locations)==0:
-                                locations =""
-                            else:
-                                locations.pop(0)
-                        else:
-                            #COMPLETAR LOGICA DE ERROR
-                            return("Se presento un ERROR en la ejecución")
-                    else:
-                        progress.pop(0)
-                        files.pop(0)
-                        steps.pop(0)
+                    # Corro 5
+                    pass
+                """
+                pass
 
-            # Update data
-            base.update_data(ID,'order',['Finished'],['State'])
-            dash.Modified_Row(ID,'Finished','Ordenes',1,8)
 
-            # INSERTA LOGICA DE BOTON APAGADO
+            if amount != 0:
+                for i in range(len(steps)):
+                   pass
 
+
+           
+
+                
+    
     def get_orders(self): # Show all the orders
         base = self.base
         key,orders = base.get_data('order')
