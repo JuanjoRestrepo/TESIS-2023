@@ -36,9 +36,12 @@ class graph():
         session.run("CREATE (order_"+ str(order_id) +":order {Name:'"+str(order_id)+"',Create_Date:'"+str(date)+"',Update_Date:'"+str(date)+"',End_Date:'',ID_Order:'"+str(order_id)+"',State:'Created',Amount:'"+str(amount)+"',Material:'"+str(material)+"', Piece:'"+str(piece)+"',Type_Error:'',Amount_Error:'', Locations:'"+str(location)+"'})")
         
         # Relacion Orden con Piece
-        self.relation('PIECE','order',piece,order_id,'ASRS Get Material')
+        self.relation('PIECE','order','piece',order_id,piece)
 
-        return([order_id,str(date),"",material,piece,amount,"",'Created',""])
+        # Relacion Orden con material
+        self.relation('MATERIAL','order','material',order_id,material)
+
+        return([order_id,str(date),"",material,piece,amount,"","",'Created',""])
 
 
     def get_data_especific(self,type,filter,name):
@@ -47,6 +50,12 @@ class graph():
         info = session.run("MATCH (n:"+ str(type)+"{"+ str(filter)+":'"+ str(name)+"'}) RETURN properties(n) ORDER BY n.Create_Date ASC")
         return (self.Separate_dict(info.data()))
     
+    def get_pieces(self):
+         # Trae la información de las piezas existentes
+        session = self.session
+        info = session.run("MATCH (n:piece) RETURN n.Name")
+        return (info.values())
+
     def get_data(self,type):
         # Trae la información de un nodo
         session = self.session
@@ -81,53 +90,31 @@ class graph():
         session = self.session
         session.run("MATCH (a:"+str(typea)+")-[r:"+str(rel)+"]->(b:"+str(typeb)+") WHERE a.Name= '"+str(namea)+"' AND b.Name= '"+str(nameb)+"' DELETE r" )
 
+    def get_steps(self,piece):
+        session = self.session
+        info = session.run("MATCH (a:piece{Name:'"+str(piece)+"'})-[rel:STEP]->(b) RETURN properties(rel),b.Name")
+        values = info.values()
+
+        def clave_de_orden(elemento):
+            return elemento[0]['Number']
+
+        lista_ordenada = sorted(values, key= clave_de_orden)
+        pro = [elemento[0] for elemento in lista_ordenada if isinstance(elemento[0], dict)]
+        steps = [d['Number'] for d in pro]
+        files = [d['File'] for d in pro]
+        stations = [elemento[1] for elemento in lista_ordenada if isinstance(elemento[1], str)]
+        return(steps,files,stations)
+    
     def close(self):
         # Cierra sesión con Neo4j
         session = self.session
         session.close()
+        
 
-run = graph()
-print("Conectado a Base desde Graph")
-# ============= Crear el nodo CNC_Lathe con sus propiedades =============
-#run.session.run("CREATE (n:machine {Name: 'CNC_Lathe', Create_Date: '08/03/2023', Update_Date: '08/03/2023', Maintenance_Date: '4/11/2025', Data_Machine: 'Denford', State: 'Avalaible', Station: 'Lathe'})")
-#print("Created CNC_Lathe node")
-
-
-# ============= Crear relaciones con los nodos CNC Lathe Activate de tipo piece1 y piece2 =============
-#run.relation("MACHINE", "piece1", "machine", "CNC Lathe Activate", "CNC_Lathe")
-#run.relation("MACHINE", "piece2", "machine", "CNC Lathe Activate", "CNC_Lathe")
-#run.relation("MACHINE", "piece3", "machine", "CNC Lathe Activate", "CNC_Lathe")
-#print("Created relationships for CNC_Lathe node")
-
-
-# ============= Obtener datos de las máquinas y mostrar solo una fila de encabezados =============
-#machine_data = run.get_data("machine")
-#print("Machine Data:")
-#print(machine_data.to_string(header=False))
-
-
-# ============= Cambiar Estado de un Nodo (Machine) =============
-#new_state = "Available"
-#run.update_data("CNC_Lathe", "machine", [new_state], ["State"])
-#print("Updated State of CNC_Lathe to", new_state)
-
-
-# ============= Eliminar Nodo =============
-#run.delete_node("machine", "CNC_Lathe")
-#print("Deleted CNC_Lathe node")
-
-# ============= Eliminar Relación =============
-#run.delete_relation("MACHINE", "CNC Lathe Activate", "CNC_Lathe", "piece1", "machine")
-#run.delete_relation('PIECE','AP1_2023_11_8_C1_H22_T8','ASRS Get Material','order','piece1')
-
-
-
-
-
-
-
-#orden_eliminada = run.delete_relation("PIECE", "AP2_2023_11_8_C1_H22_T38", "ASRS Get Material", "piece2", "MACHINE")
-#print("\nOrden Eliminada")
-
-#ordenes_obtenidas = run.get_data("piece1")  #rel,namea,nameb,typea,typeb
-#print("\n\nOrdenes Obtenidas piece1\n\n", ordenes_obtenidas)
+#run = graph()
+#print(run.get_steps('Piece1'))
+#pieces= run.get_pieces()
+#print(pieces)
+#un.delete_relation('PIECE','AP1_2023_10_8_C5_H18_T43','ASRS Get Material','order','piece1')
+#key,value = run.get_data('Piece1')
+#print(value)
