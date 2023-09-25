@@ -58,8 +58,19 @@ def activateRobotTorno():
         print("Torneando Pieza...")
         time.sleep(5)
 
-    
-
+        print("Pieza Finalizada!!")
+        openDoor(TornoPuerta, DoorDisplacement)
+        placePiece(robotTorno, PlaceTargetTorno)
+        pickPiece(TornoGripper)
+        goHome(robotTorno, HomeTargetTorno)
+        closeDoor(TornoPuerta, DoorDisplacement)
+        time.sleep(0.5)
+        getPiece(robotTorno, PickTargetTorno)
+        dropPiece(TornoGripper, frameConv3)
+        time.sleep(0.5)
+        goHome(robotTorno, HomeTargetTorno)
+        print("Pieza en Conveyor 3")
+        time.sleep(1)
 
 
 for item in obj_list1:
