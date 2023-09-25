@@ -18,6 +18,6 @@ def closeDoor(Station, DoorDisplacement):
     print("Puerta Cerrada")
 
 #If the conveyor exist, move it to the declared value.
-if TornoPuerta.Valid():
+#if TornoPuerta.Valid():
     #openDoor(TornoPuerta, DoorDisplacement)
-    closeDoor(TornoPuerta, DoorDisplacement)
+    #closeDoor(TornoPuerta, DoorDisplacement)

@@ -1,9 +1,9 @@
 # === Torno Objects ===
 from Robot_Arms_Scripts import robotTorno, TornoGripper
-from Robot_Arms_Scripts import goHome, getPiece, pickPiece, dropPiece
-from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, frameConv3
+from Robot_Arms_Scripts import goHome, getPiece, pickPiece, placePiece, dropPiece
+from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, PlaceTargetTorno, frameConv3, LatheFrame
 
-
+from Station_Scripts import DoorDisplacement, TornoPuerta, openDoor, closeDoor
 
 
 from robolink import *    # RoboDK API
@@ -37,12 +37,28 @@ obj_list8 = frame_curve4.Childs()
 
 # Variables de estado
 pick_position = 1085.485  # Posición objetivo del brazo del robot
-tolerance = 0.01
+tolerance = 0.02
 
 def activateRobotTorno():
     # Calling Actions
-    print("Actiando Robot Torno")
-    time.sleep(30)
+    getPiece(robotTorno, PickTargetTorno)
+    pickPiece(TornoGripper)
+    time.sleep(0.5)
+    goHome(robotTorno, HomeTargetTorno)
+    time.sleep(1)
+    if TornoPuerta.Valid():
+        openDoor(TornoPuerta, DoorDisplacement)
+        time.sleep(1)
+        placePiece(robotTorno, PlaceTargetTorno)
+        time.sleep(1)
+        dropPiece(TornoGripper, LatheFrame)
+        time.sleep(0.5)
+        goHome(robotTorno, HomeTargetTorno)
+        closeDoor(TornoPuerta, DoorDisplacement)
+        print("Torneando Pieza...")
+        time.sleep(5)
+
+    
 
 
 
@@ -71,8 +87,9 @@ for item in obj_list4:
         item.setParentStatic(frame_conv3)
 
 for item in obj_list5:
-    #print("\nOn Conveyor 3")
-    #print(item.PoseAbs()) 
+    print("\nOn Conveyor 3")
+    print(item.PoseAbs()) 
+    print(f"Error: {abs(item.PoseAbs()[0,3] - pick_position )}")
     if item.PoseAbs()[0,3] > 1800: 
         item.setParentStatic(frame_curve3)
     elif abs(item.PoseAbs()[0,3] - pick_position ) < tolerance:

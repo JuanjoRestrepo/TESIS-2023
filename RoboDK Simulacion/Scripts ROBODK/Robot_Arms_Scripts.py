@@ -6,12 +6,13 @@ import time
 RDK = Robolink()
 
 # ==== Define la velocidad de movimiento ====
-velocidad = 100  # en mm/s
+velocidad = 50  # en mm/s
 robotTorno = RDK.Item('Mitsubishi Torno')
 TornoGripper = RDK.Item('Robot Torno Gripper (Closed)')
 
 # ==== Volver a "Home" ====
 def goHome(robot, home_target):
+    robot.setSpeed(velocidad)
     robot.MoveJ(home_target)  # Mueve el robot de regreso a la posición "Home"
 
 # ==== Moverse hacia la Pieza ====
@@ -22,6 +23,12 @@ def getPiece(robot, piece_target):
 # ==== Recoger/Tomar la Pieza====
 def pickPiece(robotTool):
     robotTool.AttachClosest()
+    print("Pieza Tomada")
+
+# === Colocar Pieza en Torno/Fresado
+def placePiece(robot, place_target):
+    robot.setSpeed(velocidad)
+    robot.MoveJ(place_target)
 
 # ==== Drop/Devolver la Pieza====
 def dropPiece(robotTool, drop_frame):
@@ -35,4 +42,6 @@ def dropPiece(robotTool, drop_frame):
 # ==== Targets ====
 HomeTargetTorno = RDK.Item('Home_Robot_Torno2')
 PickTargetTorno = RDK.Item('Pick_Robot_Torno2')
+PlaceTargetTorno = RDK.Item('Place_Robot_Torno2')
 frameConv3 = RDK.Item('Frame_Conv3')
+LatheFrame = RDK.Item('Lathe')
