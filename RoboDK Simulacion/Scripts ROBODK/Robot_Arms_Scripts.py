@@ -10,6 +10,9 @@ velocidad = 50  # en mm/s
 robotTorno = RDK.Item('Mitsubishi Torno')
 TornoGripper = RDK.Item('Robot Torno Gripper (Closed)')
 
+robotFresado = RDK.Item('Mitsubishi Fresado')
+FresadoGripper = RDK.Item('Robot Fresado Gripper (Closed)')
+
 # ==== Volver a "Home" ====
 def goHome(robot, home_target):
     robot.setSpeed(velocidad)
@@ -39,9 +42,18 @@ def dropPiece(robotTool, drop_frame):
     detached_object.setParentStatic(drop_frame)
 
 
-# ==== Targets ====
+# ==== Targets Torno ====
 HomeTargetTorno = RDK.Item('Home_Robot_Torno2')
 PickTargetTorno = RDK.Item('Pick_Robot_Torno2')
 PlaceTargetTorno = RDK.Item('Place_Robot_Torno2')
 frameConv3 = RDK.Item('Frame_Conv3')
 LatheFrame = RDK.Item('Lathe')
+
+# ==== Targets Fresado ====
+HomeTargetFresado = RDK.Item('Casita')
+PickTargetFresado = RDK.Item('Recoger')
+PlaceTargetFresado = RDK.Item('Colocar')
+frameConv4 = RDK.Item('Frame_Conv4')
+CNCFrame = RDK.Item('CNC')
+
+#robotFresado.MoveJ(PlaceTargetFresado)

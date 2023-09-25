@@ -3,9 +3,15 @@ from Robot_Arms_Scripts import robotTorno, TornoGripper
 from Robot_Arms_Scripts import goHome, getPiece, pickPiece, placePiece, dropPiece
 from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, PlaceTargetTorno, frameConv3, LatheFrame
 
-from Station_Scripts import DoorDisplacement, TornoPuerta, openDoor, closeDoor
+from Station_Scripts import DoorDisplacement, TornoPuerta, FresadoPuerta, openDoor, closeDoor
 
 
+# === Fresado Objects ===
+from Robot_Arms_Scripts import robotFresado, FresadoGripper
+from Robot_Arms_Scripts import HomeTargetFresado, PickTargetFresado, PlaceTargetFresado, frameConv4, CNCFrame
+
+
+# === ROBODK Libraries ===
 from robolink import *    # RoboDK API
 from robodk import *      # Robot toolbox
 RDK = Robolink()
@@ -38,7 +44,9 @@ obj_list8 = frame_curve4.Childs()
 # Variables de estado
 pick_position = 1085.485  # Posición objetivo del brazo del robot
 tolerance = 0.02
+pick_positionFresado = 1998.520
 
+# Activar Robot Torno
 def activateRobotTorno():
     # Calling Actions
     getPiece(robotTorno, PickTargetTorno)
@@ -71,6 +79,42 @@ def activateRobotTorno():
         goHome(robotTorno, HomeTargetTorno)
         print("Pieza en Conveyor 3")
         time.sleep(1)
+
+
+# Activar Robot Fresado
+def activateRobotFresado():
+    # Calling Actions
+    getPiece(robotFresado, PickTargetFresado)
+    pickPiece(FresadoGripper)
+    time.sleep(0.5)
+    goHome(robotFresado, HomeTargetFresado)
+    time.sleep(1)
+    if FresadoPuerta.Valid():
+        openDoor(FresadoPuerta, -DoorDisplacement)
+        time.sleep(1)
+        placePiece(robotFresado, PlaceTargetFresado)
+        time.sleep(1)
+        dropPiece(FresadoGripper, CNCFrame)
+        time.sleep(0.5)
+        goHome(robotFresado, HomeTargetFresado)
+        closeDoor(FresadoPuerta, -DoorDisplacement)
+        print("Fresando Pieza...")
+        time.sleep(5)
+
+        print("Pieza Finalizada!!")
+        openDoor(FresadoPuerta, -DoorDisplacement)
+        placePiece(robotFresado, PlaceTargetFresado)
+        pickPiece(FresadoGripper)
+        goHome(robotFresado, HomeTargetFresado)
+        closeDoor(FresadoPuerta, -DoorDisplacement)
+        time.sleep(0.5)
+        getPiece(robotFresado, PickTargetFresado)
+        dropPiece(FresadoGripper, frameConv4)
+        time.sleep(0.5)
+        goHome(robotFresado, HomeTargetFresado)
+        print("Pieza en Conveyor 4")
+        time.sleep(1)
+
 
 
 for item in obj_list1:
@@ -118,6 +162,9 @@ for item in obj_list7:
     print(item.PoseAbs()) 
     if item.PoseAbs()[1,3] < 1200: 
         item.setParentStatic(frame_curve4)
+    elif abs(item.PoseAbs()[1,3] - pick_positionFresado) < tolerance:
+        print("\n==== ESTACION FRESADO ====")
+        activateRobotFresado()
 
 for item in obj_list8:
     print("\nOn Curve 4")
