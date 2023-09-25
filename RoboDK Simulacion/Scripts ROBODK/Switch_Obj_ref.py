@@ -1,15 +1,9 @@
-# =========== Torno ===========
-from Robot_Arms_Scripts import robotTorno, TornoGripper, frameMazakLathe, frameConv3
-from Robot_Arms_Scripts import getPiece, pickPiece, goHome, placePiece, dropPiece
-from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, PlaceTargetTorno
+# === Torno Objects ===
+from Robot_Arms_Scripts import robotTorno, TornoGripper
+from Robot_Arms_Scripts import goHome, getPiece, pickPiece, dropPiece
+from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, frameConv3
 
-# Fresado 
-from Robot_Arms_Scripts import robotFresado, FresadoGripper
-from Robot_Arms_Scripts import HomeTargetFresado, PickTargetFresado, PlaceTargetFresado
-from Robot_Arms_Scripts import frameConv4, frameCNC
 
-import Torno_Station_Scripts
-from Torno_Station_Scripts import TornoPuerta, FresadoPuerta, DoorDisplacement
 
 
 from robolink import *    # RoboDK API
@@ -40,137 +34,65 @@ obj_list6 = frame_curve3.Childs()
 obj_list7 = frame_conv4.Childs()
 obj_list8 = frame_curve4.Childs()
 
+
 # Variables de estado
-pick_position = 1085.485  # Posición objetivo del brazo del Torno
+pick_position = 1085.485  # Posición objetivo del brazo del robot
 tolerance = 0.01
-pick_position_fresado = 1998.584 # Posición objetivo del brazo del Fresado
 
-
-def activateTornoStation():
+def activateRobotTorno():
     # Calling Actions
-    getPiece(robotTorno, PickTargetTorno)
-    time.sleep(1)
-
-    pickPiece(TornoGripper)
-    time.sleep(1)
-
-    goHome(robotTorno, HomeTargetTorno)
-    time.sleep(1)
-    
-    if Torno_Station_Scripts.TornoPuerta.Valid():
-        Torno_Station_Scripts.openDoor(TornoPuerta, DoorDisplacement)
-        time.sleep(1)
-        placePiece(robotTorno, PlaceTargetTorno)
-        time.sleep(1)
-        dropPiece(TornoGripper, frameMazakLathe)
-        time.sleep(1)
-        goHome(robotTorno, HomeTargetTorno)
-        Torno_Station_Scripts.closeDoor(TornoPuerta, DoorDisplacement)
-        print("Torneando Pieza...")
-        time.sleep(5)
-        print("Pieza Terminada!!!")
-        Torno_Station_Scripts.openDoor(TornoPuerta, DoorDisplacement)
-        time.sleep(1)
-        placePiece(robotTorno, PlaceTargetTorno)
-        time.sleep(1)
-        pickPiece(TornoGripper)
-        goHome(robotTorno, HomeTargetTorno)
-        Torno_Station_Scripts.closeDoor(TornoPuerta, DoorDisplacement)
-        time.sleep(1)
-        getPiece(robotTorno, PickTargetTorno)
-        time.sleep(1)
-        dropPiece(TornoGripper, frameConv3)
-        time.sleep(1)
-        goHome(robotTorno, HomeTargetTorno)
+    print("Actiando Robot Torno")
+    time.sleep(30)
 
 
-def activateFresadoStation():
-    getPiece(robotFresado, PickTargetFresado)
-    time.sleep(1)
-
-    pickPiece(FresadoGripper)
-    time.sleep(1)
-
-    goHome(robotFresado, HomeTargetFresado)
-    time.sleep(10)
-    if Torno_Station_Scripts.FresadoPuerta.Valid():
-        Torno_Station_Scripts.openDoor(FresadoPuerta, DoorDisplacement)
-        time.sleep(1)
-        placePiece(robotFresado, PlaceTargetFresado)
-        time.sleep(1)
-        dropPiece(FresadoGripper, frameCNC)
-        time.sleep(1)
-        goHome(robotFresado, HomeTargetFresado)
-        Torno_Station_Scripts.closeDoor(FresadoPuerta, -DoorDisplacement)
-        print("Fresando Pieza...")
-        time.sleep(5)
-        print("Pieza Terminada!!!")
-        Torno_Station_Scripts.openDoor(FresadoPuerta, DoorDisplacement)
-        time.sleep(1)
-        placePiece(robotFresado, PlaceTargetFresado)
-        time.sleep(1)
-        pickPiece(FresadoGripper)
-        goHome(robotFresado, HomeTargetFresado)
-        Torno_Station_Scripts.closeDoor(FresadoPuerta, -DoorDisplacement)
-        time.sleep(1)
-        getPiece(robotFresado, PickTargetFresado)
-        time.sleep(1)
-        dropPiece(FresadoGripper, frameConv4)
-        time.sleep(1)
-        goHome(robotFresado, HomeTargetFresado)
-        
 
 for item in obj_list1:
-    #print("\n===== On Conveyor 1 =====")
+    #print("\nOn Conveyor 1")
     #print(item.PoseAbs()) #If you want to see the Abs pos matrix of the object
     if item.PoseAbs()[0,3] < 0: #[0,3] refer to line 0 column 3 in the pos matrix, so the X position
         item.setParentStatic(frame_curve)
 
 for item in obj_list2:
-    #print("\n===== On Curve 1 =====")
+    #print("\nOn Curve 1")
     #print(item.PoseAbs()) #If you want to see the Abs pos matrix of the object
     if item.PoseAbs()[1,3] > 900: #[1,3] refer to line 1 column 3 in the pos matrix, so the Y position
         item.setParentStatic(frame_conv2)
 
 for item in obj_list3:
-    #print("\n===== On Conveyor 2 =====")
+    #print("\nOn Conveyor 2")
     #print(item.PoseAbs()) 
     if item.PoseAbs()[1,3] > 2920: 
         item.setParentStatic(frame_curve2)
 
 for item in obj_list4:
-    #print("\n===== On Curve 2 =====")
+    #print("\nOn Curve 2")
     #print(item.PoseAbs()) 
     if item.PoseAbs()[0,3] > -170: 
         item.setParentStatic(frame_conv3)
 
 for item in obj_list5:
-    #print("\n===== On Conveyor 3 =====")
+    #print("\nOn Conveyor 3")
     #print(item.PoseAbs()) 
     if item.PoseAbs()[0,3] > 1800: 
         item.setParentStatic(frame_curve3)
     elif abs(item.PoseAbs()[0,3] - pick_position ) < tolerance:
-        print("\nRECOGIENDO PIEZA EN TORNO!!!!!")
-        activateTornoStation()
+        print("\n==== ESTACION TORNO ====")
+        activateRobotTorno()
     
-
 for item in obj_list6:
-    #print("\n===== On Curve 3 =====")
+    #print("\nOn Curve 3")
     #print(item.PoseAbs()) 
     if item.PoseAbs()[1,3] < 3200: 
         item.setParentStatic(frame_conv4)
 
 for item in obj_list7:
-    #print("\n===== On Conveyor 4 =====")
-    ##print(item.PoseAbs()) 
+    print("\nOn Conveyor 4")
+    print(item.PoseAbs()) 
     if item.PoseAbs()[1,3] < 1200: 
         item.setParentStatic(frame_curve4)
-    elif abs(item.PoseAbs()[1,3] - pick_position_fresado ) < tolerance:
-        print("\nRECOGIENDO PIEZA EN FRESADO!!!!!")
-        activateFresadoStation()
 
 for item in obj_list8:
-    print("\n===== On Curve 4 =====")
+    print("\nOn Curve 4")
     print(item.PoseAbs()) 
     if item.PoseAbs()[0,3] < 2100 or item.PoseAbs()[1,3] < 260: 
         item.setParentStatic(frame_conv1)
