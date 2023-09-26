@@ -49,7 +49,7 @@ obj_list8 = frame_curve4.Childs()
 pick_position = 1085.485  # Posición objetivo del brazo del robot
 tolerance = 0.02
 pick_positionFresado = 1998.520
-pick_positionUR3 = 1830.221 #1030.219 cuando los cubos estan con reset
+pick_positionUR3 = 1030.227 #1030.219 cuando los cubos estan con reset
 
 # Activar Robot Torno
 def activateRobotTorno():
