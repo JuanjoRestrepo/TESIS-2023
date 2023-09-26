@@ -46,10 +46,10 @@ obj_list8 = frame_curve4.Childs()
 
 
 # Variables de estado
-pick_position = 1085.485  # Posición objetivo del brazo del robot
-tolerance = 0.02
-pick_positionFresado = 1998.520
-pick_positionUR3 = 1030.227 #1030.219 cuando los cubos estan con reset
+pick_position = 1084.779 #1085.485  CUBOS
+tolerance = 0.05
+pick_positionFresado = 1998.3 # Cubos 1998.520
+pick_positionUR3 = 1030.046 # 1030.046 Cubos
 
 # Activar Robot Torno
 def activateRobotTorno():
@@ -108,8 +108,10 @@ def activateRobotFresado():
 
         print("Pieza Finalizada!!")
         openDoor(FresadoPuerta, -DoorDisplacement)
+        time.sleep(1)
         placePiece(robotFresado, PlaceTargetFresado)
         pickPiece(FresadoGripper)
+        time.sleep(1)
         goHome(robotFresado, HomeTargetFresado)
         closeDoor(FresadoPuerta, -DoorDisplacement)
         time.sleep(0.5)
@@ -201,7 +203,7 @@ for item in obj_list5:
     print(f"Error: {abs(item.PoseAbs()[0,3] - pick_position )}")
     if item.PoseAbs()[0,3] > 1800: 
         item.setParentStatic(frame_curve3)
-    elif abs(item.PoseAbs()[0,3] - pick_position ) < tolerance:
+    elif abs(item.PoseAbs()[0,3] - pick_position ) < tolerance or abs(item.PoseAbs()[0,3] - pick_position ) < 125:
         print("\n==== ESTACION TORNO ====")
         activateRobotTorno()
     
@@ -213,7 +215,8 @@ for item in obj_list6:
 
 for item in obj_list7:
     print("\nOn Conveyor 4")
-    print(item.PoseAbs()) 
+    print(item.PoseAbs())
+    print(f"Error: {abs(item.PoseAbs()[1,3] - pick_positionFresado )}")
     if item.PoseAbs()[1,3] < 1200: 
         item.setParentStatic(frame_curve4)
     elif abs(item.PoseAbs()[1,3] - pick_positionFresado) < tolerance:
