@@ -13,6 +13,9 @@ TornoGripper = RDK.Item('Robot Torno Gripper (Closed)')
 robotFresado = RDK.Item('Mitsubishi Fresado')
 FresadoGripper = RDK.Item('Robot Fresado Gripper (Closed)')
 
+robotUR3 = RDK.Item('Robot UR3')
+UR3Gripper = RDK.Item('Robot UR3 Gripper (Open)')
+
 # ==== Volver a "Home" ====
 def goHome(robot, home_target):
     robot.setSpeed(velocidad)
@@ -41,6 +44,9 @@ def dropPiece(robotTool, drop_frame):
     # Establece "Frame_Conv3" como el padre del objeto previamente adjunto
     detached_object.setParentStatic(drop_frame)
 
+def scanPiece(robot, scan_target):
+    robot.setSpeed(velocidad)
+    robot.MoveJ(scan_target)
 
 # ==== Targets Torno ====
 HomeTargetTorno = RDK.Item('Home_Robot_Torno2')
@@ -56,4 +62,50 @@ PlaceTargetFresado = RDK.Item('Colocar')
 frameConv4 = RDK.Item('Frame_Conv4')
 CNCFrame = RDK.Item('CNC')
 
-#robotFresado.MoveJ(PlaceTargetFresado)
+# ==== Targets UR3 ====
+HomeUR3 = RDK.Item('HomeUR3')
+PickUR3 = RDK.Item('Pick')
+PlaceUR3 = RDK.Item('PlaceUR3')
+frameConv1 = RDK.Item('Frame_Conv1')
+DeskUR3Frame = RDK.Item('DeskUR3')
+
+# Scan Targets
+Scan1 = RDK.Item('Scan1')
+Scan2 = RDK.Item('Scan2')
+Scan3 = RDK.Item('Scan3')
+Scan4 = RDK.Item('Scan4')
+Scan5 = RDK.Item('Scan5')
+
+#pickPiece(UR3Gripper)
+#time.sleep(0.5)
+#goHome(robotUR3, HomeUR3)
+#time.sleep(1)
+#placePiece(robotUR3, PlaceUR3)
+#time.sleep(1)
+#dropPiece(UR3Gripper, DeskUR3Frame)
+#time.sleep(1)
+#dropPiece(UR3Gripper, frameConv1)
+#pickPiece(UR3Gripper)
+#dropPiece(UR3Gripper, DeskUR3Frame)
+#goHome(robotUR3, HomeUR3)
+"""
+scanPiece(robotUR3, Scan1)
+time.sleep(1)
+scanPiece(robotUR3, Scan2)
+time.sleep(1)
+scanPiece(robotUR3, Scan3)
+time.sleep(1)
+scanPiece(robotUR3, Scan2)
+time.sleep(1)
+scanPiece(robotUR3, Scan1)
+time.sleep(1)
+scanPiece(robotUR3, Scan4)
+time.sleep(1)
+scanPiece(robotUR3, Scan5)
+time.sleep(1)
+scanPiece(robotUR3, Scan4)
+time.sleep(1)
+scanPiece(robotUR3, Scan1)
+time.sleep(1)
+goHome(robotUR3, HomeUR3)
+"""

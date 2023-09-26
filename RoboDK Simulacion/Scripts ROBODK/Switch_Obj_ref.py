@@ -11,6 +11,10 @@ from Robot_Arms_Scripts import robotFresado, FresadoGripper
 from Robot_Arms_Scripts import HomeTargetFresado, PickTargetFresado, PlaceTargetFresado, frameConv4, CNCFrame
 
 
+# === UR3  Objects ===
+from Robot_Arms_Scripts import robotUR3, UR3Gripper, scanPiece, DeskUR3Frame, frameConv1
+from Robot_Arms_Scripts import HomeUR3, PickUR3, PlaceUR3, Scan1, Scan2, Scan3, Scan4, Scan5
+
 # === ROBODK Libraries ===
 from robolink import *    # RoboDK API
 from robodk import *      # Robot toolbox
@@ -45,6 +49,7 @@ obj_list8 = frame_curve4.Childs()
 pick_position = 1085.485  # Posición objetivo del brazo del robot
 tolerance = 0.02
 pick_positionFresado = 1998.520
+pick_positionUR3 = 1830.221 #1030.219 cuando los cubos estan con reset
 
 # Activar Robot Torno
 def activateRobotTorno():
@@ -116,16 +121,65 @@ def activateRobotFresado():
         time.sleep(1)
 
 
+def activateUR3():
+    getPiece(robotUR3, PickUR3)
+    time.sleep(1)
+    pickPiece(UR3Gripper)
+    time.sleep(0.5)
+    goHome(robotUR3, HomeUR3)
+    time.sleep(1)
+    placePiece(robotUR3, PlaceUR3)
+    time.sleep(1)
+    dropPiece(UR3Gripper, DeskUR3Frame)
+    time.sleep(1)
+
+    scanPiece(robotUR3, Scan1)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan2)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan3)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan2)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan1)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan4)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan5)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan4)
+    time.sleep(1)
+    scanPiece(robotUR3, Scan1)
+    time.sleep(1)
+    print("Pieza Escaneada Correctamente!!")
+    time.sleep(1)
+
+    placePiece(robotUR3, PlaceUR3)
+    time.sleep(1)
+    pickPiece(UR3Gripper)
+    time.sleep(1)
+    goHome(robotUR3, HomeUR3)
+    time.sleep(1)
+    getPiece(robotUR3, PickUR3)
+    time.sleep(1)
+    dropPiece(UR3Gripper, frameConv1)
+    time.sleep(1)
+    goHome(robotUR3, HomeUR3)
+    print("Finished")
 
 for item in obj_list1:
-    #print("\nOn Conveyor 1")
-    #print(item.PoseAbs()) #If you want to see the Abs pos matrix of the object
+    print("\nOn Conveyor 1")
+    print(item.PoseAbs()) #If you want to see the Abs pos matrix of the object
+    print(f"ErrorPosUR3: {abs(item.PoseAbs()[0,3] - pick_positionUR3)}")
     if item.PoseAbs()[0,3] < 0: #[0,3] refer to line 0 column 3 in the pos matrix, so the X position
         item.setParentStatic(frame_curve)
+    elif abs(item.PoseAbs()[0,3] - pick_positionUR3) < tolerance:
+        print("\n==== UR3 PICKING ====")
+        activateUR3()
 
 for item in obj_list2:
-    #print("\nOn Curve 1")
-    #print(item.PoseAbs()) #If you want to see the Abs pos matrix of the object
+    print("\nOn Curve 1")
+    print(item.PoseAbs()) #If you want to see the Abs pos matrix of the object
     if item.PoseAbs()[1,3] > 900: #[1,3] refer to line 1 column 3 in the pos matrix, so the Y position
         item.setParentStatic(frame_conv2)
 
