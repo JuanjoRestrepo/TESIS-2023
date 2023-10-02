@@ -35,3 +35,5 @@ def moveCurve(curveConveyor, rotationAngle):
 
 def resetCurve(curveConveyor, rotationAngle):
     curveConveyor.MoveJ(curveConveyor.Joints() - rotationAngle * 3)
+
+#moveCurve(Conv_curved2, PART_ROTATION_ANGLE)

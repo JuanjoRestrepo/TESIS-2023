@@ -5,10 +5,10 @@ import time
 RDK = Robolink()
 
 #Set the travel of the conveyors for each iterations
-PART_TRAVEL_MM1 = 200
-PART_TRAVEL_MM2 = 200
-PART_TRAVEL_MM3 = 200
-PART_TRAVEL_MM4 = 200
+PART_TRAVEL_MM1 = 100
+PART_TRAVEL_MM2 = 100
+PART_TRAVEL_MM3 = 100
+PART_TRAVEL_MM4 = 100
 
 #Declaration of the conveyor object
 Conv_mechanism1 = RDK.Item('Conv_Mech1',itemtype=ITEM_TYPE_ROBOT)
@@ -25,7 +25,7 @@ def MoveConveyor(conveyor, part_travel_mm):
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
-            if next_position >= 2040:
+            if next_position > 2100:
                 # Si la próxima posición excede el límite, establece la posición en exactamente 2000
                 break  # Sal del bucle
             else:
@@ -45,6 +45,6 @@ def ResetConveyorPosition(conveyor, resetFramePoint):
     if conveyor.Valid():
         conveyor.setJoints([resetFramePoint])
 
-#MoveConveyor2(Conv_mechanism2, PART_TRAVEL_MM)
+#MoveConveyor(Conv_mechanism2, PART_TRAVEL_MM1)
 #ResetConveyorPosition(Conv_mechanism2)
 
