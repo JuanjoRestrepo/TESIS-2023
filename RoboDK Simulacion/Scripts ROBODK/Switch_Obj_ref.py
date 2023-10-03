@@ -280,8 +280,6 @@ for item in obj_list7:
 for item in obj_list8:
     print("\nOn Curve 4")
     endTimeCurve4 = moveCurve(Conv_curved4, PART_ROTATION_ANGLE)
-    print(item.PoseAbs())
-    time.sleep(30)
     if item.PoseAbs()[0,3] >= 1900: 
         item.setParentStatic(frame_conv1)
         resetCurve(Conv_curved4, PART_ROTATION_ANGLE)
