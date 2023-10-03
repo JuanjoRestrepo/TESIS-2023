@@ -194,11 +194,13 @@ for item in obj_list1:
     print("\nOn Conveyor 1")
     endTimeConv1 = MoveConveyor(Conv_mechanism1, PART_TRAVEL_MM1)
     print(item.PoseAbs())
-    time.sleep(60)
+    #time.sleep(60)
     if item.PoseAbs()[0,3] < 0 or item.PoseAbs()[1,3] > 250: #[0,3] refer to line 0 column 3 in the pos matrix, so the X position
         item.setParentStatic(frame_curve)
         ResetConveyorPosition(Conv_mechanism1, 0)
-
+    else:
+        ResetConveyorPosition(Conv_mechanism1, 0)
+        
     FinalTimeSection4 = endTimeConv1
     endTimeConv1 = 0
     print(f"Tiempo acumulado en Banda 1: {FinalTimeSection4} segundos")
@@ -252,7 +254,7 @@ for item in obj_list5:
 for item in obj_list6:
     print("\nOn Curve 3")
     endTimeCurve3 = moveCurve(Conv_curved3, PART_ROTATION_ANGLE)
-    if item.PoseAbs()[0,3] >= 2800: 
+    if item.PoseAbs()[0,3] >= 2700: 
         item.setParentStatic(frame_conv4)
         resetCurve(Conv_curved3, PART_ROTATION_ANGLE)
 
@@ -263,7 +265,6 @@ for item in obj_list6:
 for item in obj_list7:
     print("\nOn Conveyor 4")
     endTimeConv4 = MoveConveyor(Conv_mechanism4, PART_TRAVEL_MM4)
-    
     if item.PoseAbs()[0,3] > 2750: 
         item.setParentStatic(frame_curve4)
         ResetConveyorPosition(Conv_mechanism4, 0)
@@ -279,8 +280,9 @@ for item in obj_list7:
 for item in obj_list8:
     print("\nOn Curve 4")
     endTimeCurve4 = moveCurve(Conv_curved4, PART_ROTATION_ANGLE)
-    
-    if item.PoseAbs()[0,3] > 1930: 
+    print(item.PoseAbs())
+    time.sleep(30)
+    if item.PoseAbs()[0,3] >= 1900: 
         item.setParentStatic(frame_conv1)
         resetCurve(Conv_curved4, PART_ROTATION_ANGLE)
 

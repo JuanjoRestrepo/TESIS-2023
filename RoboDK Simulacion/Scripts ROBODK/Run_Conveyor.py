@@ -25,6 +25,7 @@ def MoveConveyor(conveyor, part_travel_mm):
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
+            print(next_position)
             if next_position > 2100:
                 # Si la próxima posición excede el límite, establece la posición en exactamente 2000
                 break  # Sal del bucle
@@ -45,6 +46,6 @@ def ResetConveyorPosition(conveyor, resetFramePoint):
     if conveyor.Valid():
         conveyor.setJoints([resetFramePoint])
 
-#MoveConveyor(Conv_mechanism2, PART_TRAVEL_MM1)
-#ResetConveyorPosition(Conv_mechanism2)
+#MoveConveyor(Conv_mechanism1, PART_TRAVEL_MM1)
+#ResetConveyorPosition(Conv_mechanism1, 0)
 
