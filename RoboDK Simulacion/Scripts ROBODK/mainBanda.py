@@ -8,16 +8,16 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # Define las rutas completas a tus scripts de la banda transportadora
 scriptsBanda = [ 
     os.path.join(script_dir, "Switch_Obj_ref.py"),
-    os.path.join(script_dir, "Run_Conveyor_Curve.py"),
+    #os.path.join(script_dir, "Run_Conveyor_Curve.py"),
 
-    os.path.join(script_dir, "Run_Conveyor.py"),
-    os.path.join(script_dir, "Run_Conveyor_Curve.py"),
+    #os.path.join(script_dir, "Run_Conveyor.py"),
+    #os.path.join(script_dir, "Run_Conveyor_Curve.py"),
 
-    os.path.join(script_dir, "Run_Conveyor.py"),
-    os.path.join(script_dir, "Run_Conveyor_Curve.py"),
+    #os.path.join(script_dir, "Run_Conveyor.py"),
+    #os.path.join(script_dir, "Run_Conveyor_Curve.py"),
     
-    os.path.join(script_dir, "Run_Conveyor.py"),
-    os.path.join(script_dir, "Run_Conveyor_Curve.py")
+    #os.path.join(script_dir, "Run_Conveyor.py"),
+    #os.path.join(script_dir, "Run_Conveyor_Curve.py")
     
 ]
 
