@@ -35,8 +35,10 @@ Conv_mechanism4 = RDK.Item('Conv_Mech4',itemtype=ITEM_TYPE_ROBOT)
 # === Pick Targets ===
 pick_positionTorno = 1084.779
 tolerance = 16
-pick_positionFresado = 975.0
-pick_positionUR3 = 1030.046
+pick_positionFresado = 985.0
+
+toleranceUR3 = 26
+pick_positionUR3 = 875.0
 
 # === Robot Scripts ===
 # Activar Robot Torno
@@ -154,13 +156,14 @@ def activateUR3():
     print("Finished")
 
 
-def MoveConveyor2(conveyor, part_travel_mm):
+
+def MoveConveyor2(conveyor, part_travel_mm, pieza):
     if conveyor.Valid():
         conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
         start_time = time.time()
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
-
+            piece_position = pieza.PoseAbs()[0, 3] 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
             print(next_position)
@@ -175,7 +178,7 @@ def MoveConveyor2(conveyor, part_travel_mm):
 
         end_time = time.time()
         elapsed_time = end_time - start_time
-        return elapsed_time
+        return elapsed_time, piece_position
 
 def MoveConveyor3(conveyor, part_travel_mm, pieza):
     if conveyor.Valid():
@@ -184,8 +187,8 @@ def MoveConveyor3(conveyor, part_travel_mm, pieza):
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3] 
-            print("Pieza Position: ", piece_position)
-            print(f"Error {abs(current_position - pick_positionTorno)}")
+            #print("Pieza Position: ", piece_position)
+            #print(f"Error {abs(current_position - pick_positionTorno)}")
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
@@ -216,7 +219,7 @@ def MoveConveyor4(conveyor, part_travel_mm, pieza):
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3] 
             print("Pieza Position: ", piece_position)
-            print(f"Error {abs(current_position - pick_positionTorno)}")
+            print(f"Error {abs(current_position - pick_positionFresado)}")
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
@@ -224,7 +227,7 @@ def MoveConveyor4(conveyor, part_travel_mm, pieza):
             if next_position > 2100:
                 # Si la próxima posición excede el límite, establece la posición en exactamente 2000
                 break  # Sal del bucle
-            elif abs(piece_position - pick_positionFresado) < tolerance:
+            elif abs(current_position - pick_positionFresado) < tolerance:
                 print("\n==== ESTACION FRESADO ====")
                 activateRobotFresado()
                 time.sleep(1)
@@ -239,6 +242,39 @@ def MoveConveyor4(conveyor, part_travel_mm, pieza):
         end_time = time.time()
         elapsed_time = end_time - start_time
         return elapsed_time, piece_position
+
+def MoveConveyor1(conveyor, part_travel_mm, pieza):
+    if conveyor.Valid():
+        conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
+        start_time = time.time()
+        while conveyor.Valid():
+            current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
+            piece_position = pieza.PoseAbs()[0, 3] 
+            #print("Pieza Position: ", piece_position)
+            #print(f"Error {abs(current_position - pick_positionTorno)}")
+
+            # Verifica si la próxima posición excederá el límite de 2000
+            next_position = current_position + part_travel_mm
+            print(next_position)
+            if next_position > 2100:
+                # Si la próxima posición excede el límite, establece la posición en exactamente 2000
+                break  # Sal del bucle
+            elif abs(current_position - pick_positionUR3) < toleranceUR3:
+                print("\n==== ESTACION UR3 ====")
+                time.sleep(1)
+                activateUR3()
+                conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
+            else:
+                # Mueve la banda
+                conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
+
+            # Calcula el tiempo transcurrido desde el inicio
+            elapsed_time = time.time() - start_time
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        return elapsed_time, piece_position
+
 
 def ResetConveyorPosition(conveyor, resetFramePoint):
     if conveyor.Valid():
