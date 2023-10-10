@@ -4,7 +4,7 @@ import time
 
 # === Robot Arms Libraries ===
     # === Torno Objects ===
-from Robot_Arms_Scripts import robotTorno, TornoGripper
+from Robot_Arms_Scripts import robotTorno, TornoGripperClose, TornoGripperOpen
 from Robot_Arms_Scripts import goHome, getPiece, pickPiece, placePiece, dropPiece
 from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, PlaceTargetTorno, frameConv3, LatheFrame
 from Station_Scripts import DoorDisplacement, TornoPuerta, FresadoPuerta, openDoor, closeDoor
@@ -23,7 +23,7 @@ RDK = Robolink()
 #Set the travel of the conveyors for each iterations
 PART_TRAVEL_MM1 = 100
 PART_TRAVEL_MM2 = 100
-PART_TRAVEL_MM3 = 100
+PART_TRAVEL_MM3 = 25
 PART_TRAVEL_MM4 = 100
 
 #Declaration of the conveyor object
@@ -33,8 +33,8 @@ Conv_mechanism3 = RDK.Item('Conv_Mech3',itemtype=ITEM_TYPE_ROBOT)
 Conv_mechanism4 = RDK.Item('Conv_Mech4',itemtype=ITEM_TYPE_ROBOT)
 
 # === Pick Targets ===
-pick_positionTorno = 1084.779
-tolerance = 16
+pick_positionTorno = 1010.0
+tolerance = 15
 pick_positionFresado = 985.0
 
 toleranceUR3 = 26
@@ -44,35 +44,17 @@ pick_positionUR3 = 875.0
 # Activar Robot Torno
 def activateRobotTorno():
     # Calling Actions
-    getPiece(robotTorno, PickTargetTorno)
-    pickPiece(TornoGripper)
-    time.sleep(0.5)
-    goHome(robotTorno, HomeTargetTorno)
-    time.sleep(1)
-    if TornoPuerta.Valid():
-        openDoor(TornoPuerta, DoorDisplacement)
-        time.sleep(1)
-        placePiece(robotTorno, PlaceTargetTorno)
-        time.sleep(1)
-        dropPiece(TornoGripper, LatheFrame)
-        time.sleep(0.5)
-        goHome(robotTorno, HomeTargetTorno)
-        closeDoor(TornoPuerta, DoorDisplacement)
-        print("Torneando Pieza...")
-        time.sleep(5)
-        print("Pieza Finalizada!!")
-        openDoor(TornoPuerta, DoorDisplacement)
-        placePiece(robotTorno, PlaceTargetTorno)
-        pickPiece(TornoGripper)
-        goHome(robotTorno, HomeTargetTorno)
-        closeDoor(TornoPuerta, DoorDisplacement)
-        time.sleep(0.5)
-        getPiece(robotTorno, PickTargetTorno)
-        dropPiece(TornoGripper, frameConv3)
-        time.sleep(0.5)
-        goHome(robotTorno, HomeTargetTorno)
-        print("Pieza en Conveyor 3")
-        time.sleep(1)
+    PutPieceLatheProgram = RDK.Item('Put Piece Lathe')
+    GetPieceLatheProgram = RDK.Item('Get Piece Lathe')
+
+    PutPieceLatheProgram.RunProgram()
+    time.sleep(5)
+    GetPieceLatheProgram.RunProgram()
+    time.sleep(5)
+    dropPiece(TornoGripperClose,frameConv3)
+    
+
+
 
 # Activar Robot Fresado
 def activateRobotFresado():
@@ -187,18 +169,19 @@ def MoveConveyor3(conveyor, part_travel_mm, pieza):
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3] 
-            #print("Pieza Position: ", piece_position)
-            #print(f"Error {abs(current_position - pick_positionTorno)}")
+            print("Pieza Position: ", piece_position)
+            print(f"Error {abs(current_position - pick_positionTorno)}")
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
             print(next_position)
-            if next_position > 2100:
+            if next_position > 2075:
                 # Si la próxima posición excede el límite, establece la posición en exactamente 2000
                 break  # Sal del bucle
             elif abs(current_position - pick_positionTorno) < tolerance:
                 print("\n==== ESTACION TORNO ====")
                 activateRobotTorno()
+                time.sleep(1)
                 conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
             else:
                 # Mueve la banda
@@ -206,10 +189,10 @@ def MoveConveyor3(conveyor, part_travel_mm, pieza):
 
             # Calcula el tiempo transcurrido desde el inicio
             elapsed_time = time.time() - start_time
-
+            
         end_time = time.time()
         elapsed_time = end_time - start_time
-        return elapsed_time, piece_position
+        return elapsed_time#, piece_position
 
 def MoveConveyor4(conveyor, part_travel_mm, pieza):
     if conveyor.Valid():
@@ -281,5 +264,5 @@ def ResetConveyorPosition(conveyor, resetFramePoint):
         conveyor.setJoints([resetFramePoint])
 
 
-#ResetConveyorPosition(Conv_mechanism1, 0)
-
+#ResetConveyorPosition(Conv_mechanism2, 960)
+#MoveConveyor3(Conv_mechanism3, PART_TRAVEL_MM3)

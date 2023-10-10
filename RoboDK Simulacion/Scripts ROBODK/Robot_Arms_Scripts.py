@@ -54,6 +54,8 @@ PickTargetTorno = RDK.Item('Pick_Robot_Torno2')
 PlaceTargetTorno = RDK.Item('Place_Robot_Torno2')
 frameConv3 = RDK.Item('Frame_Conv3')
 LatheFrame = RDK.Item('Lathe')
+TornoGripperOpen = RDK.Item('Grip Open Lathe')
+TornoGripperClose = RDK.Item('Grip Close Lathe')
 
 # ==== Targets Fresado ====
 HomeTargetFresado = RDK.Item('Casita')

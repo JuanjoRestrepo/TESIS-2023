@@ -11,6 +11,7 @@ Conv_curved2 = RDK.Item('Curved_Conv_Mech2',itemtype=ITEM_TYPE_ROBOT)
 Conv_curved3 = RDK.Item('Curved_Conv_Mech3',itemtype=ITEM_TYPE_ROBOT)
 Conv_curved4 = RDK.Item('Curved_Conv_Mech4',itemtype=ITEM_TYPE_ROBOT)
 
+
 #If the conveyor exist, move it to the declared value.
 def moveCurve(curveConveyor, rotationAngle):
     #setSpeed(speed_linear, speed_joints, accel_linear, accel_joints), 
