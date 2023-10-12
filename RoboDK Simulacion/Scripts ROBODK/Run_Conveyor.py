@@ -53,9 +53,6 @@ def activateRobotTorno():
     time.sleep(5)
     dropPiece(TornoGripperClose,frameConv3)
     
-
-
-
 # Activar Robot Fresado
 def activateRobotFresado():
     # Calling Actions
