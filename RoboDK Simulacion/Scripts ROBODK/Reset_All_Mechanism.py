@@ -12,6 +12,6 @@ for i in range(len(MECHANISM_LIST)):
     mechanismConv2 = RDK.Item("Conv_Mech2",itemtype=ITEM_TYPE_ROBOT)
     if mechanism.Valid() and mechanismConv2.Valid():
         mechanism.setJoints([0])
-        mechanismConv2.setJoints([970])
+        mechanismConv2.setJoints([960])
         
 

@@ -53,8 +53,8 @@ def runLatheSection():
     for item in obj_list3:
         print("\nOn Conveyor 2")
         endTimeConv2, piezaPosition = MoveConveyor2(Conv_mechanism2, PART_TRAVEL_MM2, item)
-        if item.PoseAbs()[1, 3] > 3000:
-            print("Pieza yendo a almacen")
+        if piezaPosition > 3000:
+            print("Llegué a Curva 2")
             item.setParentStatic(frame_curve2)
             ResetConveyorPosition(Conv_mechanism2, 960)
         FinalTimeConv2 = endTimeConv2
@@ -71,19 +71,19 @@ def runLatheSection():
         endTimeCurve2 = 0
         print(f"Tiempo acumulado en Curva 2: {FinalTimeCurve2} segundos")
 
-    for item in obj_list5:
-        print("\nOn Conveyor 3")
+    #for item in obj_list5:
+    #    print("\nOn Conveyor 3")
         #print(item.PoseAbs()[0, 3] )
-        endTimeConv3, piezaPosition = MoveConveyor3(Conv_mechanism3, PART_TRAVEL_MM3, item)
-        if piezaPosition > 2080:
-            item.setParentStatic(frame_curve3)
-            ResetConveyorPosition(Conv_mechanism3, 0)
+    #    endTimeConv3, piezaPosition = MoveConveyor3(Conv_mechanism3, PART_TRAVEL_MM3, item)
+    #    if piezaPosition > 2080:
+    #        item.setParentStatic(frame_curve3)
+    #        ResetConveyorPosition(Conv_mechanism3, 0)
 
-        FinalTimeConv3 = endTimeConv3
-        endTimeConv3 = 0
-        print(f"Tiempo acumulado en Banda 3:  {FinalTimeConv3} segundos")
+    #    FinalTimeConv3 = endTimeConv3
+    #    endTimeConv3 = 0
+    #    print(f"Tiempo acumulado en Banda 3:  {FinalTimeConv3} segundos")
 
-    FinalTimeLatheSection = FinalTimeConv2 + FinalTimeCurve2 + FinalTimeConv3
-    print(f"Tiempo total en la sección del torno: {FinalTimeLatheSection} segundos")
+    #FinalTimeLatheSection = FinalTimeConv2 + FinalTimeCurve2 + FinalTimeConv3
+    #print(f"Tiempo total en la sección del torno: {FinalTimeLatheSection} segundos")
 
 runLatheSection()
