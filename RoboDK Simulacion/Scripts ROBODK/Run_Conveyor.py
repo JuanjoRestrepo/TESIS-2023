@@ -33,7 +33,7 @@ Conv_mechanism3 = RDK.Item('Conv_Mech3',itemtype=ITEM_TYPE_ROBOT)
 Conv_mechanism4 = RDK.Item('Conv_Mech4',itemtype=ITEM_TYPE_ROBOT)
 
 # === Pick Targets ===
-pick_positionTorno = 1010.0
+pick_positionTorno = 1025.0
 tolerance = 15
 pick_positionFresado = 985.0
 
@@ -143,8 +143,8 @@ def MoveConveyor2(conveyor, part_travel_mm, pieza):
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[1, 3]
-            print("Pieza Position: ", piece_position)
-            print("Conveyor Position: ", current_position)
+            #print("Pieza Position: ", piece_position)
+            #print("Conveyor Position: ", current_position)
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
             print(next_position)
