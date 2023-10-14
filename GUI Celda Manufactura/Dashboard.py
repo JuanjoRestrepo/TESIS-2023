@@ -5,7 +5,7 @@ class dashboard():
 
     def __init__(self):
         #authorization
-        self.Path = "OneDrive\Desktop\credentials.json"
+        self.Path = "credentials.json"
         self.Key = '1FG65WfkqVTcV38nBV5GGBlrH4ZFhSjjzAsvYMbKzCQM'
         
 

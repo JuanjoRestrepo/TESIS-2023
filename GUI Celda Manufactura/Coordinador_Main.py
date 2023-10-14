@@ -12,67 +12,75 @@ class coordinator():
     def Find_Index_Key(self,data,valor):
         return(data.index(valor))
 
-    # ACCIONES CELDA DE MANUFACTURA
+    # Start Process (Run Manufacturing Cell)
     def Start_Process(self):
         dash = self.dash
         base = self.base
 
         # Bring all the nodes type order with status Created
-        orders_keys,orders_values = base.get_data_especific('order','State','Created')
+        orders_keys,orders_values = base.get_data_especific('order','State','Running')
         # If we dont have orders to run, notified
         if len(orders_values) == 0:
-            return("Lo lamento, en este momento no hay ninguna orden para ejecutar")
+            return([True,"Lo lamento, en este momento no hay ninguna orden para ejecutar"])
 
         # Run the steps of the order created
         for order in orders_values:
+            Run = True
 
-            locations = eval(order[self.Find_Index_Key(orders_keys[0],'Locations')])
-            ID = order[self.Find_Index_Key(orders_keys[0],'ID_Order')]
+            locations = eval(order[self.Find_Index_Key(orders_keys[0],'Locations')]) # Bring Locations to ASRS                                
+            ID = order[self.Find_Index_Key(orders_keys[0],'ID_Order')] 
             amount = order[self.Find_Index_Key(orders_keys[0],'Amount')]
             piece = order[self.Find_Index_Key(orders_keys[0],'Piece')]
             steps,files,stations = base.get_steps(piece)
-
+            
             # Update data
             base.update_data(ID,'order',['Running'],['State'])
-            dash.Modified_Row(ID,'Running','Ordenes',1,8)
+            dash.Modified_Row(ID,'Running','Ordenes',1,9)
+
+            # Logic for Run
             create = 1
-            progress = [0]*len(steps)
-
-            if progress[-1] != amount:
-
-                if (create <= len(steps)) and (create <= amount):
-                    finish = Run_Stations.run_process(ID,files[:create],locations[0])
-                    if finish:
-                        for n in range(create):
-                            progress[n]=+1
-                        create=+1
-                        locations.pop(0)
-                    else:
-                        #COMPLETAR LOGICA DE ERROR
-                        return("Se presento un ERROR en la ejecución")
-
-                    
-                else:
-                    if progress[0] != amount:
-                        finish = Run_Stations.run_process(ID,files[:len(steps)],locations[0])
+            progress = [0]*len(steps) 
+     
+            while Run:
+                if progress[-1] != amount:  # correr todas las piezas en la última estacion
+                    if (create <= int(len(steps))) and (create <= int(amount)): 
+                        finish = Run_Stations.Run_Stations(ID,files[:create],locations[0],create)
+                        print(finish)
                         if finish:
-                            for n in range(len(progress)):
+                            for n in range(create):
                                 progress[n]=+1
-                            if len(locations)==0:
-                                locations =""
-                            else:
-                                locations.pop(0)
+                            print(progress)
+                            create=+1
+                            locations.pop(0)
                         else:
                             #COMPLETAR LOGICA DE ERROR
-                            return("Se presento un ERROR en la ejecución")
+                            return([True,"Se presento un ERROR en la ejecución"])
+
                     else:
-                        progress.pop(0)
-                        files.pop(0)
-                        steps.pop(0)
+                        if progress[0] != amount:
+                            finish = Run_Stations.Run_Stations(ID,files[:len(steps)],locations[0],create)
+                            if finish:
+                                for n in range(len(progress)):
+                                    progress[n]=+1
+                                if len(locations)==0:
+                                    locations =""
+                                else:
+                                    locations.pop(0)
+                            else:
+                                #COMPLETAR LOGICA DE ERROR
+                                return([True,"Se presento un ERROR en la ejecución"])
+                        else:
+                            progress.pop(0)
+                            files.pop(0)
+                            steps.pop(0)
+                else:
+                    Run = False
 
             # Update data
             base.update_data(ID,'order',['Finished'],['State'])
-            dash.Modified_Row(ID,'Finished','Ordenes',1,8)
+            dash.Modified_Row(ID,'Finished','Ordenes',1,9)
+            return("run1")
+            
 
             # INSERTA LOGICA DE BOTON APAGADO
 
@@ -102,12 +110,13 @@ class coordinator():
         base = self.base
         ID =[]
         key,values = base.get_data_especific('order','State','Created')
-        index = self.Find_Index_Key(key[0],'ID_Order')
-        
-        for i in values:
-            ID.append(i[index])
-
-        return(ID)
+        if len(values) == 0:
+            return(ID)
+        else:
+            index = self.Find_Index_Key(key[0],'ID_Order')
+            for i in values:
+                ID.append(i[index])
+            return(ID)
 
     def get_storage(self): # Get Storage properties
         base = self.base
@@ -329,17 +338,35 @@ class coordinator():
             else:
                 pass
         
-    def modify_storage(self,name,data,propiedades): #modify storage properties
+    def modify_storage(self,material,amount,ID): #modify storage properties
         base = self.base
-        base.update_data(name,'storage',data,propiedades)
-        return('El storage fue actualizado con éxito')
-        # TENER EN CUENTA QUE LA NUEVA INFORMACION DEBE CUMPLIR CON LOS CRITERIOS
+        keys,values= base.get_data_especific('material','Name',material)
+        
+        disponible = values[0]
+        
+        available = eval(disponible[self.Find_Index_Key(keys[0],'Available')]) # valor cantidad disponible material
+        locations = eval(disponible[self.Find_Index_Key(keys[0],'Location')]) # Ubicaciones
+        used = eval(disponible[self.Find_Index_Key(keys[0],'Used')]) # Usadas
+        
+        if (int(available == 0) or (int(available)< amount)):
+            return(False,"")
+        
+        else:
+            # Update locations
+            location = locations[0:amount]
+            del locations[0:amount]
+            used.extend(location)
+            available = int(available) - amount
+            
+            base.update_data(material,'material',[available,locations,used,str(datetime.now())],['Available','Location','Used','Update_Date'])
+            base.update_data(ID,'order',[location,str(datetime.now())],['Locations','Update_Date'])
+
+            return(True)
         
     
+#run = coordinator()
 
-run = coordinator()
-
-run.Start_Process()
+#print(run.Start_Process())
 #print(run.get_ID())
 #print(run.information_order('AP1_2023_30_8_C5_H11_T33'))
 #print(run.get_storage())

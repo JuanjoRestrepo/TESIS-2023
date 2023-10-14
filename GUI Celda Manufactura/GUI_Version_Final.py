@@ -50,7 +50,7 @@ class Application(tk.Frame):
         self.print_orders_button = tk.Button(self, text="ÓRDENES", command=self.print_orders,bg="white")
         self.print_orders_button.grid(row=7, column=1,columnspan=3,padx=20, pady=7,ipadx=70, ipady=5)
 
-        self.modify_storage_button = tk.Button(self, text="MODIFICAR ALMACÉN", command=self.modify_storage,bg="white")
+        self.modify_storage_button = tk.Button(self, text="REABASTECER ALMACÉN", command=self.modify_storage,bg="white")
         self.modify_storage_button.grid(row=4, column=3,padx=20, pady=7,ipadx=35, ipady=5)
 
         self.start_button = tk.Button(self, text="EJECUTAR CELDA", command=self.run,bg="white")
@@ -516,9 +516,36 @@ class Application(tk.Frame):
     
     def modify_storage(self):
         # Lógica para modificar almacen
-        self.modify_storage_screen()
-        print("Almacen Modificado")
+        coordinator = self.coordinator
+        base = self.base
+        import Storage_Refill
 
+        confirm = messagebox.askyesno("Confirmación", "¿Estás seguro de que quieres eliminar esta orden?")
+
+        if confirm:
+            available_E = '15'
+            available_A = '10'
+            locations_E = '[[1,3],[1,4],[1,5],[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,3],[4,4],[4,5],[5,3],[5,4],[5,5]]'
+            locations_A = '[[1,1],[1,2],[2,1],[2,2],[3,1],[3,2],[4,1],[4,2],[5,1],[5,2]]'
+            used_A = '[]'
+            used_E = '[]'
+
+            base.update_data('Empack','material',[available_E,locations_E,used_E,str(datetime.now())],['Available','Location','Used','Update_Date'])
+            base.update_data('Aluminio','material',[available_A,locations_A,used_A,str(datetime.now())],['Available','Location','Used','Update_Date'])
+
+            created = coordinator.get_ID()
+
+            for i in created:
+
+                key,value = coordinator.information_order(i)
+                amount = value[coordinator.Find_Index_Key(key,'Amount')]
+                material = value[coordinator.Find_Index_Key(key,'Material')]
+                
+                confirm2 = coordinator.modify_storage(material,int(amount),i)
+
+                if confirm2:
+                    Storage_Refill.Storage()
+        
     def print_orders(self):
         
         # Crear una ventana para mostrar las órdenes
@@ -550,7 +577,6 @@ class Application(tk.Frame):
         tv = ttk.Treeview(orders_window,columns=columns, show='headings')
 
         for i in columns:
-            tv.heading(i,text=i,anchor='center')
             tv.column(i,width=155,anchor='center')
         
         for order in orders:

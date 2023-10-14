@@ -1,5 +1,4 @@
 import numpy as np
-import random
 import pandas as pd
 from neo4j import GraphDatabase
 from datetime import datetime
@@ -75,6 +74,11 @@ class graph():
         for i in property:
             session.run("MATCH (n:"+ str(type)+"{Name:'"+str(name)+"'})  SET n."+ str(i)+" = '"+ str(info[n])+"'")
             n += 1
+    
+    def update_data_relation(self,namea,typea,nameb,typeb,info,rel,property):
+        # Actualiza la información de un nodo, dependiendo de la propiedad e información a modificar
+        session = self.session
+        session.run("MATCH (a:"+ str(typea)+"{Name:'"+ str(namea)+"'})-[r:"+ str(rel)+"]->(b:"+ str(typeb)+"{Name:'"+ str(nameb)+"'}) SET r."+ str(property)+" = '"+ str(info)+"'")
 
     def create_relation_data(self,rel,data,typea,typeb,namea,nameb):
         # Crear relaciones entre nodos con un json como etiqueta
