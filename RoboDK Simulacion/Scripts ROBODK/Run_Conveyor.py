@@ -4,18 +4,11 @@ import time
 
 # === Robot Arms Libraries ===
     # === Torno Objects ===
-from Robot_Arms_Scripts import robotTorno, TornoGripperClose, TornoGripperOpen
 from Robot_Arms_Scripts import goHome, getPiece, pickPiece, placePiece, dropPiece
-from Robot_Arms_Scripts import HomeTargetTorno, PickTargetTorno, PlaceTargetTorno, frameConv3, LatheFrame
+from Robot_Arms_Scripts import frameConv3, LatheFrame
 from Station_Scripts import DoorDisplacement, TornoPuerta, FresadoPuerta, openDoor, closeDoor
 
-    # === Fresado Objects ===
-from Robot_Arms_Scripts import robotFresado, FresadoGripper
-from Robot_Arms_Scripts import HomeTargetFresado, PickTargetFresado, PlaceTargetFresado, frameConv4, CNCFrame
-
-    # === UR3  Objects ===
-from Robot_Arms_Scripts import robotUR3, UR3Gripper, scanPiece, DeskUR3Frame, frameConv1
-from Robot_Arms_Scripts import HomeUR3, PickUR3, PlaceUR3, Scan1, Scan2, Scan3, Scan4, Scan5
+from Station_Lathe import Run
 
 
 RDK = Robolink()
@@ -162,14 +155,15 @@ def MoveConveyor2(conveyor, part_travel_mm, pieza):
         return elapsed_time, piece_position
 
 def MoveConveyor3(conveyor, part_travel_mm, pieza):
+    OnPickTarget = None
     if conveyor.Valid():
         conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
         start_time = time.time()
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3] 
-            print("Pieza Position: ", piece_position)
-            print(f"Error {abs(current_position - pick_positionTorno)}")
+            #print("Pieza Position: ", piece_position)
+            #print(f"Error {abs(current_position - pick_positionTorno)}")
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
@@ -179,8 +173,9 @@ def MoveConveyor3(conveyor, part_travel_mm, pieza):
                 break  # Sal del bucle
             elif abs(current_position - pick_positionTorno) < tolerance:
                 print("\n==== ESTACION TORNO ====")
-                #activateRobotTorno()
-                time.sleep(100)
+                OnPickTarget = True
+                Run('ffff','Piece1')
+                
                 conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
             else:
                 # Mueve la banda
@@ -191,7 +186,7 @@ def MoveConveyor3(conveyor, part_travel_mm, pieza):
             
         end_time = time.time()
         elapsed_time = end_time - start_time
-        return elapsed_time#, piece_position
+        return elapsed_time, piece_position, OnPickTarget
 
 def MoveConveyor4(conveyor, part_travel_mm, pieza):
     if conveyor.Valid():

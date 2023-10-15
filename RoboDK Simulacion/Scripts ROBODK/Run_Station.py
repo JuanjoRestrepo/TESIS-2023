@@ -49,6 +49,7 @@ def runLatheSection():
     FinalTimeConv2 = 0
     FinalTimeCurve2 = 0
     FinalTimeConv3 = 0
+    OnPickTarget = None
     
     for item in obj_list3:
         print("\nOn Conveyor 2")
@@ -59,7 +60,7 @@ def runLatheSection():
             ResetConveyorPosition(Conv_mechanism2, 960)
         FinalTimeConv2 = endTimeConv2
         endTimeConv2 = 0
-        print("Time Conveyor 2: ", FinalTimeConv2)
+        
 
     for item in obj_list4:
         print("\nOn Curve 2")
@@ -69,21 +70,27 @@ def runLatheSection():
             resetCurve(Conv_curved2, PART_ROTATION_ANGLE)
         FinalTimeCurve2 = endTimeCurve2
         endTimeCurve2 = 0
-        print(f"Tiempo acumulado en Curva 2: {FinalTimeCurve2} segundos")
+        
 
     for item in obj_list5:
         print("\nOn Conveyor 3")
-        #print(item.PoseAbs()[0, 3] )
-        endTimeConv3, piezaPosition = MoveConveyor3(Conv_mechanism3, PART_TRAVEL_MM3, item)
+        
+        endTimeConv3, piezaPosition, OnPickTarget = MoveConveyor3(Conv_mechanism3, PART_TRAVEL_MM3, item)
         if piezaPosition > 2080:
             item.setParentStatic(frame_curve3)
             ResetConveyorPosition(Conv_mechanism3, 0)
 
         FinalTimeConv3 = endTimeConv3
         endTimeConv3 = 0
-        print(f"Tiempo acumulado en Banda 3:  {FinalTimeConv3} segundos")
+        
 
     #FinalTimeLatheSection = FinalTimeConv2 + FinalTimeCurve2 + FinalTimeConv3
     #print(f"Tiempo total en la sección del torno: {FinalTimeLatheSection} segundos")
+    print("OnPickTarget: ", OnPickTarget)
+    return FinalTimeConv2, FinalTimeCurve2, FinalTimeConv3
 
-runLatheSection()
+time1, time2, time3 = runLatheSection()
+
+print(f"Tiempo Conveyor 2: {time1} segundos")
+print(f"Tiempo en Curva 2: {time2} segundos")
+print(f"Tiempo en Banda 3:  {time3} segundos")
