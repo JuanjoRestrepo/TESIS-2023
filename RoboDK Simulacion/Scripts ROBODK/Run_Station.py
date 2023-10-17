@@ -1,9 +1,12 @@
-from Run_Conveyor import MoveConveyor2, MoveConveyor3, ResetConveyorPosition
-from Run_Conveyor import Conv_mechanism2, Conv_mechanism3
-from Run_Conveyor import PART_TRAVEL_MM2, PART_TRAVEL_MM3
+from Run_Conveyor import MoveConveyor2, MoveConveyor3, MoveConveyor4, ResetConveyorPosition
+from Run_Conveyor import Conv_mechanism2, Conv_mechanism3, Conv_mechanism4
+from Run_Conveyor import PART_TRAVEL_MM2, PART_TRAVEL_MM3, PART_TRAVEL_MM4
 
 
 from Run_Conveyor_Curve import moveCurve, resetCurve
+
+
+from Station_Lathe import RunLathe
 
 # === ROBODK Libraries ===
 from robolink import *    # RoboDK API
@@ -49,6 +52,7 @@ def runLatheSection():
     FinalTimeConv2 = 0
     FinalTimeCurve2 = 0
     FinalTimeConv3 = 0
+    FinalTimeRobot = 0
     OnPickTarget = None
     
     for item in obj_list3:
@@ -58,8 +62,8 @@ def runLatheSection():
             print("Llegué a Curva 2")
             item.setParentStatic(frame_curve2)
             ResetConveyorPosition(Conv_mechanism2, 960)
-        FinalTimeConv2 = endTimeConv2
-        endTimeConv2 = 0
+        FinalTimeConv2 += endTimeConv2
+        #endTimeConv2 = 0
         
 
     for item in obj_list4:
@@ -68,29 +72,77 @@ def runLatheSection():
         if item.PoseAbs()[0, 3] >= -24:
             item.setParentStatic(frame_conv3)
             resetCurve(Conv_curved2, PART_ROTATION_ANGLE)
-        FinalTimeCurve2 = endTimeCurve2
-        endTimeCurve2 = 0
+        FinalTimeCurve2 += endTimeCurve2
+        #endTimeCurve2 = 0
         
 
     for item in obj_list5:
         print("\nOn Conveyor 3")
-        
         endTimeConv3, piezaPosition, OnPickTarget = MoveConveyor3(Conv_mechanism3, PART_TRAVEL_MM3, item)
         if piezaPosition > 2080:
             item.setParentStatic(frame_curve3)
             ResetConveyorPosition(Conv_mechanism3, 0)
+        
+        if OnPickTarget:
+            tiempo_run_lathe = RunLathe('ffff','Piece1')
+            FinalTimeRobot += tiempo_run_lathe
 
-        FinalTimeConv3 = endTimeConv3
-        endTimeConv3 = 0
+        FinalTimeConv3 += endTimeConv3
+        #endTimeConv3 = 0
         
 
-    #FinalTimeLatheSection = FinalTimeConv2 + FinalTimeCurve2 + FinalTimeConv3
+    FinalTimeLatheSection = FinalTimeConv2 + FinalTimeCurve2 + FinalTimeConv3
     #print(f"Tiempo total en la sección del torno: {FinalTimeLatheSection} segundos")
-    print("OnPickTarget: ", OnPickTarget)
-    return FinalTimeConv2, FinalTimeCurve2, FinalTimeConv3
+    #print("OnPickTarget: ", OnPickTarget)
+    return FinalTimeLatheSection
 
-time1, time2, time3 = runLatheSection()
 
-print(f"Tiempo Conveyor 2: {time1} segundos")
-print(f"Tiempo en Curva 2: {time2} segundos")
-print(f"Tiempo en Banda 3:  {time3} segundos")
+def runMellingSection():
+    OnPickTarget = None
+    for item in obj_list6:
+        print("\nOn Curve 3")
+        endTimeCurve3 = moveCurve(Conv_curved3, PART_ROTATION_ANGLE)
+        if item.PoseAbs()[0,3] >= 2700: 
+            item.setParentStatic(frame_conv4)
+            resetCurve(Conv_curved3, PART_ROTATION_ANGLE)
+        FinalTimeCurve3 = endTimeCurve3
+        endTimeCurve3 = 0
+        print(f"Tiempo acumulado en Curva 3: {FinalTimeCurve3} segundos")
+
+    for item in obj_list7:
+        print("\nOn Conveyor 4")
+        endTimeConv4, piezaPosition, OnPickTarget = MoveConveyor4(Conv_mechanism4, PART_TRAVEL_MM4, item)    
+        if OnPickTarget:
+            print("Estoy en el Target del Melling")
+            time.sleep(10)
+
+        FinalTimeConv4 = endTimeConv4
+        endTimeConv4 = 0
+        print(f"Tiempo acumulado en Banda 4: {FinalTimeConv4} segundos")
+
+"""
+def runInspectionSection():
+    for item in obj_list8:
+        print("\nOn Curve 4")
+        endTimeCurve4 = moveCurve(Conv_curved4, PART_ROTATION_ANGLE)
+        if item.PoseAbs()[0,3] >= 1900: 
+            item.setParentStatic(frame_conv1)
+            resetCurve(Conv_curved4, PART_ROTATION_ANGLE)
+        FinalTimeCurve4 = endTimeCurve4
+        endTimeCurve4 = 0
+        print(f"Tiempo acumulado en Curva 4: {FinalTimeCurve4} segundos")
+
+    for item in obj_list1:
+        print("\nOn Conveyor 1")
+        endTimeConv1, piezaPosition = MoveConveyor1(Conv_mechanism1, PART_TRAVEL_MM1, item)
+        print(piezaPosition)
+        if piezaPosition > -200:
+            item.setParentStatic(frame_curve1)
+            ResetConveyorPosition(Conv_mechanism1, 0)
+        FinalTimeConv1 = endTimeConv1
+        endTimeConv1 = 0
+        print("Time acumulado en Banda 1: ", FinalTimeConv1)"""
+
+#TotalTime = runLatheSection()
+#print(f"Tiempo total en la sección del torno: {TotalTime} segundos")
+runMellingSection()

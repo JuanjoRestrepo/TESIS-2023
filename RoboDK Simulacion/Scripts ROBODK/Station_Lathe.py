@@ -44,7 +44,7 @@ def create_Piece(RDK,piece,new_piece):
     return()
 
 
-def Run(loc,piece):
+def RunLathe(loc,piece):
     # Conectar a RoboDK
     RDK = Robolink()
     #dash = Dashboard.dashboard()
@@ -190,7 +190,7 @@ def Run(loc,piece):
     #    base.update_data_relation(ID,'order','CNC_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
     
     #return(tiempo_transcurrido,tiempo_lathe_total,tiempo_robot_total)
-    
+    return tiempo_lathe_total
 
 #print(Run('AP2_2023_23_9_C2_H17_T30',2,'ffff','Piece1'))
 
