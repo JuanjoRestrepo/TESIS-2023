@@ -81,8 +81,8 @@ def MoveConveyor3(conveyor, part_travel_mm, pieza):
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3]
-            print("Current Position: ", current_position)
-            print("Pieza Position: ", piece_position)
+            #print("Current Position: ", current_position)
+            #print("Pieza Position: ", piece_position)
             #print(f"Error {abs(current_position - pick_positionTorno)}")
 
             # Verifica si la próxima posición excederá el límite de 2000

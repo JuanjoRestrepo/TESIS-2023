@@ -111,10 +111,16 @@ def runMellingSection():
 
     for item in obj_list7:
         print("\nOn Conveyor 4")
+        print(item.PoseAbs()[1, 3])
         endTimeConv4, piezaPosition, OnPickTarget = MoveConveyor4(Conv_mechanism4, PART_TRAVEL_MM4, item)    
         if OnPickTarget:
             print("Estoy en el Target del Melling")
-            time.sleep(10)
+            time.sleep(5)
+        if item.PoseAbs()[1, 3] <= 900:
+            print("En curva 4!!")
+            item.setParentStatic(frame_curve4)
+            ResetConveyorPosition(Conv_mechanism4, 0)
+  
 
         FinalTimeConv4 = endTimeConv4
         endTimeConv4 = 0
