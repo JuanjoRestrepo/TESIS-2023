@@ -139,26 +139,26 @@ def MoveConveyor4(conveyor, part_travel_mm, pieza):
         return elapsed_time, piece_position, OnPickTarget
 
 def MoveConveyor1(conveyor, part_travel_mm, pieza):
+    OnPickTarget = None
     if conveyor.Valid():
         conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
         start_time = time.time()
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3] 
-            #print("Pieza Position: ", piece_position)
+            print("Pieza xd: ", piece_position)
             #print(f"Error {abs(current_position - pick_positionTorno)}")
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
             print(next_position)
-            if next_position > 2100:
+            if next_position > 2000:
                 # Si la próxima posición excede el límite, establece la posición en exactamente 2000
                 break  # Sal del bucle
             elif abs(current_position - pick_positionUR3) < toleranceUR3:
                 print("\n==== ESTACION UR3 ====")
-                time.sleep(1)
-                activateUR3()
-                conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
+                OnPickTarget = True
+                break
             else:
                 # Mueve la banda
                 conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
@@ -168,7 +168,7 @@ def MoveConveyor1(conveyor, part_travel_mm, pieza):
 
         end_time = time.time()
         elapsed_time = end_time - start_time
-        return elapsed_time, piece_position
+        return elapsed_time, piece_position, OnPickTarget
 
 
 def ResetConveyorPosition(conveyor, resetFramePoint):

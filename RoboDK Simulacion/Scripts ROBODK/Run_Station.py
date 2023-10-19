@@ -1,6 +1,6 @@
-from Run_Conveyor import MoveConveyor2, MoveConveyor3, MoveConveyor4, ResetConveyorPosition
-from Run_Conveyor import Conv_mechanism2, Conv_mechanism3, Conv_mechanism4
-from Run_Conveyor import PART_TRAVEL_MM2, PART_TRAVEL_MM3, PART_TRAVEL_MM4
+from Run_Conveyor import MoveConveyor1, MoveConveyor2, MoveConveyor3, MoveConveyor4, ResetConveyorPosition
+from Run_Conveyor import Conv_mechanism1, Conv_mechanism2, Conv_mechanism3, Conv_mechanism4
+from Run_Conveyor import PART_TRAVEL_MM1, PART_TRAVEL_MM2, PART_TRAVEL_MM3, PART_TRAVEL_MM4
 
 
 from Run_Conveyor_Curve import moveCurve, resetCurve
@@ -126,7 +126,7 @@ def runMellingSection():
         endTimeConv4 = 0
         print(f"Tiempo acumulado en Banda 4: {FinalTimeConv4} segundos")
 
-"""
+
 def runInspectionSection():
     for item in obj_list8:
         print("\nOn Curve 4")
@@ -140,15 +140,30 @@ def runInspectionSection():
 
     for item in obj_list1:
         print("\nOn Conveyor 1")
-        endTimeConv1, piezaPosition = MoveConveyor1(Conv_mechanism1, PART_TRAVEL_MM1, item)
-        print(piezaPosition)
-        if piezaPosition > -200:
+        endTimeConv1, piezaPosition, OnPickTarget = MoveConveyor1(Conv_mechanism1, PART_TRAVEL_MM1, item)
+        if OnPickTarget:
+            print("Estoy en el Target del UR3")
+            time.sleep(5)
+        
+        if piezaPosition < 0:
             item.setParentStatic(frame_curve1)
             ResetConveyorPosition(Conv_mechanism1, 0)
         FinalTimeConv1 = endTimeConv1
         endTimeConv1 = 0
-        print("Time acumulado en Banda 1: ", FinalTimeConv1)"""
+        print("Time acumulado en Banda 1: ", FinalTimeConv1)
+
+    for item in obj_list2:
+        print("\nOn Curve 1")
+        endTimeCurve1 = moveCurve(Conv_curved1, PART_ROTATION_ANGLE)
+        
+        if item.PoseAbs()[0,1] > -830:
+            item.setParentStatic(frame_conv2)
+            resetCurve(Conv_curved1, PART_ROTATION_ANGLE)
+        FinalTimeCurve1 = endTimeCurve1
+        endTimeCurve1 = 0
+        print(f"Tiempo acumulado en Curva 1: {FinalTimeCurve1} segundos")
 
 #TotalTime = runLatheSection()
 #print(f"Tiempo total en la sección del torno: {TotalTime} segundos")
-runMellingSection()
+#runMellingSection()
+runInspectionSection()
