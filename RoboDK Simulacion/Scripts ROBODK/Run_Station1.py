@@ -53,11 +53,11 @@ def runLatheSection():
     FinalTimeCurve2 = 0
     FinalTimeConv3 = 0
     FinalTimeRobot = 0
-    OnPickTarget = None
+    #OnPickTarget = None
     
     for item in obj_list3:
         print("\nOn Conveyor 2")
-        endTimeConv2, piezaPosition = MoveConveyor2(Conv_mechanism2, PART_TRAVEL_MM2, item)
+        endTimeConv2, piezaPosition, OnPickTarget = MoveConveyor2(Conv_mechanism2, PART_TRAVEL_MM2, item)
         if piezaPosition > 3000:
             print("Llegué a Curva 2")
             item.setParentStatic(frame_curve2)
@@ -162,6 +162,16 @@ def runInspectionSection():
         FinalTimeCurve1 = endTimeCurve1
         endTimeCurve1 = 0
         print(f"Tiempo acumulado en Curva 1: {FinalTimeCurve1} segundos")
+    
+    for item in obj_list3:
+        print("\nOn Conveyor 2")
+        #print(item.PoseAbs())
+        #time.sleep(40)
+        endTimeConv2, piezaPosition, OnPickTarget = MoveConveyor2(Conv_mechanism2, PART_TRAVEL_MM2, item)
+        if OnPickTarget:
+            print("Estoy en el Target del ASRS")
+            time.sleep(5)
+            #Llamar Robot ASRS
 
 #TotalTime = runLatheSection()
 #print(f"Tiempo total en la sección del torno: {TotalTime} segundos")
