@@ -29,6 +29,7 @@ def dropPiece(robotTool, drop_frame):
     detached_object.setParentStatic(drop_frame)
 
 def create_Piece(RDK,piece,new_piece):
+    world = RDK.Item('World',itemtype=ITEM_TYPE_FRAME)
     pieza_original = RDK.Item(new_piece)
     pieza_vieja = RDK.Item(piece)
     lathe= RDK.Item('Mazak Lathe Base torno')
@@ -37,8 +38,11 @@ def create_Piece(RDK,piece,new_piece):
     object_copy1 = RDK.Paste(paste_to=lathe)
     object_copy1.setName('piece')
     object_copy1.setPose(transl(-352.259,-145.960,-85.819))
+    object_copy1.setVisible(True)
 
     pieza_vieja.setVisible(False)
+    pieza_vieja.setParentStatic(world)
+    pieza_vieja.setPose(transl(-99999,-300,-9.167))
     # Actualizar la pantalla de RoboDK
     RDK.Render()
     return()
@@ -82,6 +86,7 @@ def Run(ID,num,loc,piece):
         robot.MoveJ(Pick)
         tool = gripper('C',RDK)
         tool.AttachClosest()
+        tool.AttachClosest()
         robot.setSpeed(velocidad)
         robot.MoveJ(Home)
         robot.MoveJ(Step1)
@@ -104,6 +109,7 @@ def Run(ID,num,loc,piece):
         frame = RDK.Item('Mazak Lathe Base torno')
         gripper('O',RDK)
         robot.setSpeed(velocidad)
+        dropPiece(tool, frame)
         dropPiece(tool, frame)
         robot.MoveJ(Step2)
         tiempo_robot2 = time.time()
@@ -154,8 +160,8 @@ def Run(ID,num,loc,piece):
     tiempo_lathe_total= round(tiempo_lathe_total,2)
 
     # Actualización de la base y dashboard
-    dash.Add_End(['Robot Mitsubishi Torno',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones')
-    dash.Add_End(['CNC Torno',str(datetime.now()),tiempo_lathe_total,ID,'Exitoso'],'Ejecuciones')
+    dash.Add_End(['Robot Mitsubishi Torno',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones Máquinas')
+    dash.Add_End(['CNC Torno',str(datetime.now()),tiempo_lathe_total,ID,'Exitoso'],'Ejecuciones Máquinas')
 
     if num == 1:
         # Station
@@ -185,9 +191,6 @@ def Run(ID,num,loc,piece):
         nuevo_tiempo = int(tiempo) + tiempo_lathe_total
         base.update_data_relation(ID,'order','CNC_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
     
-    return(tiempo_transcurrido,tiempo_lathe_total,tiempo_robot_total)
-    
-
 #print(Run('AP2_2023_23_9_C2_H17_T30',2,'ffff','Piece1'))
 
 

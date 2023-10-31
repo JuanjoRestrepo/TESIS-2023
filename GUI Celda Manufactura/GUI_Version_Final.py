@@ -54,10 +54,10 @@ class Application(tk.Frame):
         self.modify_storage_button.grid(row=4, column=3,padx=20, pady=7,ipadx=35, ipady=5)
 
         self.start_button = tk.Button(self, text="EJECUTAR CELDA", command=self.run,bg="white")
-        self.start_button.grid(row=5, column=3,padx=20, pady=7,ipadx=50, ipady=5)
+        self.start_button.grid(row=5, column=3,padx=20, pady=7,ipadx=55, ipady=5)
 
-        self.stop_button = tk.Button(self, text="DESACTIVAR CELDA", command=self.stop,bg="white")
-        self.stop_button.grid(row=6, column=3,padx=20, pady=7,ipadx=42, ipady=5)
+        self.stop_button = tk.Button(self, text="PARADA DE EMERGENCIA", command=self.stop,bg="white")
+        self.stop_button.grid(row=6, column=3,padx=20, pady=7,ipadx=32, ipady=5)
      
     def create_order_screen(self):
         # Lógica para crear una orden aquí
@@ -395,8 +395,9 @@ class Application(tk.Frame):
             material = value[coordinator.Find_Index_Key(key,'Material')]
             piece = value[coordinator.Find_Index_Key(key,'Piece')]
 
+            
             nested_list = (base.get_pieces())
-            exist_pieces = [piece for sublist1 in nested_list for sublist2 in sublist1 for piece in sublist2]
+            exist_pieces = [piece for sublist in nested_list for piece in sublist]
             keys,values= base.get_data('material')
             index= coordinator.Find_Index_Key(keys[0],'Name')
             exist_materials =[]
@@ -573,9 +574,9 @@ class Application(tk.Frame):
 
         # Mostrar el encabezado de la tabla de órdenes
         columns =["ID ORDEN",'CANTIDAD','MATERIAL','PIEZA','FECHA CREACIÓN','STATUS']
-
+   
         tv = ttk.Treeview(orders_window,columns=columns, show='headings')
-
+        tv.tag_configure("Black.Treeview.Column", foreground="black")
         for i in columns:
             tv.column(i,width=155,anchor='center')
         

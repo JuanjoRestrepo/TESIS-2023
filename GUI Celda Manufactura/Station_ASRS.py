@@ -82,7 +82,7 @@ def Get_Piece(Up,Piece,RDK,num,ID):
     tiempo_transcurrido =  round(tiempo_transcurrido,2)
 
     # Actualización de la base y dashboard
-    dash.Add_End(['ASRS',str(datetime.now()),tiempo_transcurrido,ID],'Ejecuciones Máquinas')
+    dash.Add_End(['ASRS',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones Máquinas')
    
     if num == 1:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_ASRS')
@@ -143,7 +143,7 @@ def Put_Piece(Down,Piece,RDK,num,ID):
     tiempo_transcurrido = tiempo_fin - tiempo_inicio
 
     # Actualización de la base y dashboard
-    dash.Add_End(['ASRS',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones')
+    dash.Add_End(['ASRS',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones Máquinas')
    
     if num == 1:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_ASRS')

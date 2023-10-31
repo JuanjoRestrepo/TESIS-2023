@@ -133,8 +133,8 @@ def Run(ID,num):
     tiempo_melling_total = round(tiempo_melling_total,2)
 
     # Actualización de la base y dashboard
-    dash.Add_End(['Robot Mitsubishi Melling',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones')
-    dash.Add_End(['CNC Melling',str(datetime.now()),tiempo_melling_total,ID,'Exitoso'],'Ejecuciones')
+    dash.Add_End(['Robot Mitsubishi Melling',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones Máquinas')
+    dash.Add_End(['CNC Melling',str(datetime.now()),tiempo_melling_total,ID,'Exitoso'],'Ejecuciones Máquinas')
 
     if num == 1:
         # Station

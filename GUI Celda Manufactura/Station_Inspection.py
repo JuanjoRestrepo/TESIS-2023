@@ -108,7 +108,7 @@ def Run (ID,num):
     tiempo_transcurrido =  round(tiempo_transcurrido,2)
 
     # Actualización de la base y dashboard
-    dash.Add_End(['Robot UR3',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones')
+    dash.Add_End(['Robot UR3',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones Máquinas')
    
     if num == 1:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_Inspection')

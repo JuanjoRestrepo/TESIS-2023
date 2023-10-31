@@ -188,7 +188,6 @@ class coordinator():
         return('La orden '+str(ID)+' fue eliminada con éxito')
 
     def modify_order(self,ID,piece,material,amount,cpiece,cmaterial,camount):
-        # PREGUNTAR SI ES NECESARIO MODIFICAR EL ID
         dash = self.dash
         base = self.base
         
@@ -210,8 +209,8 @@ class coordinator():
         used_A = eval(value_A[0][self.Find_Index_Key(key_A[0],'Used')]) # Usadas
         
         if cpiece:
-            base.delete_relation('PIECE',ID,last_piece,'order',last_piece)
-            base.relation('PIECE','order',piece,ID,piece)
+            base.delete_relation('PIECE',ID,last_piece,'order','piece')
+            base.relation('PIECE','order','piece',ID,piece)
             base.update_data(ID,'order',[piece,str(datetime.now())],['Piece','Update_Date'])
             dash.Modified_Row(ID,piece,'Ordenes',1,5) #piece
 

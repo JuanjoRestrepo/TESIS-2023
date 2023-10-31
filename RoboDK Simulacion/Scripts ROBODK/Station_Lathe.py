@@ -1,8 +1,8 @@
 from robolink import *
 from robodk import *
-#import Dashboard
+import Dashboard
 import time
-#import Graph
+import Graph
 from datetime import datetime
 
 # DEFINE GRIPPERS FUNCTIONS
@@ -29,6 +29,7 @@ def dropPiece(robotTool, drop_frame):
     detached_object.setParentStatic(drop_frame)
 
 def create_Piece(RDK,piece,new_piece):
+    world = RDK.Item('World',itemtype=ITEM_TYPE_FRAME)
     pieza_original = RDK.Item(new_piece)
     pieza_vieja = RDK.Item(piece)
     lathe= RDK.Item('Mazak Lathe Base torno')
@@ -37,18 +38,21 @@ def create_Piece(RDK,piece,new_piece):
     object_copy1 = RDK.Paste(paste_to=lathe)
     object_copy1.setName('piece')
     object_copy1.setPose(transl(-352.259,-145.960,-85.819))
+    object_copy1.setVisible(True)
 
     pieza_vieja.setVisible(False)
+    pieza_vieja.setParentStatic(world)
+    pieza_vieja.setPose(transl(-99999,-300,-9.167))
     # Actualizar la pantalla de RoboDK
     RDK.Render()
     return()
 
 
-def RunLathe(loc,piece):
+def Run(ID,num,loc,piece):
     # Conectar a RoboDK
     RDK = Robolink()
-    #dash = Dashboard.dashboard()
-    #base = Graph.graph()
+    dash = Dashboard.dashboard()
+    base = Graph.graph()
     
     # VARIABLES A UTILIZAR
     robot = RDK.Item('Mitsubishi Torno')
@@ -82,6 +86,7 @@ def RunLathe(loc,piece):
         robot.MoveJ(Pick)
         tool = gripper('C',RDK)
         tool.AttachClosest()
+        tool.AttachClosest()
         robot.setSpeed(velocidad)
         robot.MoveJ(Home)
         robot.MoveJ(Step1)
@@ -104,6 +109,7 @@ def RunLathe(loc,piece):
         frame = RDK.Item('Mazak Lathe Base torno')
         gripper('O',RDK)
         robot.setSpeed(velocidad)
+        dropPiece(tool, frame)
         dropPiece(tool, frame)
         robot.MoveJ(Step2)
         tiempo_robot2 = time.time()
@@ -153,48 +159,41 @@ def RunLathe(loc,piece):
     tiempo_robot_total = round(tiempo_robot_total,2)
     tiempo_lathe_total= round(tiempo_lathe_total,2)
 
-    print(f"tiempo transcurrido: {tiempo_transcurrido} seg")
-    print(f"tiempo Robot Total: {tiempo_robot_total} seg" )
-    print(f"tiempo Lathe Total: {tiempo_lathe_total} seg" )
-
     # Actualización de la base y dashboard
-    #dash.Add_End(['Robot Mitsubishi Torno',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones')
-    #dash.Add_End(['CNC Torno',str(datetime.now()),tiempo_lathe_total,ID,'Exitoso'],'Ejecuciones')
+    dash.Add_End(['Robot Mitsubishi Torno',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones Máquinas')
+    dash.Add_End(['CNC Torno',str(datetime.now()),tiempo_lathe_total,ID,'Exitoso'],'Ejecuciones Máquinas')
 
-    #if num == 1:
+    if num == 1:
         # Station
-    #    base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_Lathe')
+        base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_Lathe')
 
         # Robot Lathe
-    #    base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_robot_total),'order','machine',ID,'Robot_Lathe')
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_robot_total),'order','machine',ID,'Robot_Lathe')
 
         # CNC Lathe
-    #    base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_lathe_total),'order','machine',ID,'CNC_Lathe')
-    #else:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_lathe_total),'order','machine',ID,'CNC_Lathe')
+    else:
         # Station
-    #    tiempo = base.get_data_relation('order',ID,'station','Station_Lathe','TIME_STATION')
-    #    tiempo = tiempo[1][0][0]
-    #    nuevo_tiempo = int(tiempo) + tiempo_transcurrido
-    #    base.update_data_relation(ID,'order','Station_Lathe','station',nuevo_tiempo,'TIME_STATION','time')
+        tiempo = base.get_data_relation('order',ID,'station','Station_Lathe','TIME_STATION')
+        tiempo = tiempo[1][0][0]
+        nuevo_tiempo = int(tiempo) + tiempo_transcurrido
+        base.update_data_relation(ID,'order','Station_Lathe','station',nuevo_tiempo,'TIME_STATION','time')
 
         # Robot Lathe
-    #    tiempo = base.get_data_relation('order',ID,'machine','Robot_Lathe','TIME_MACHINE')
-    #    tiempo = tiempo[1][0][0]
-    #    nuevo_tiempo = int(tiempo) + tiempo_robot_total
-    #    base.update_data_relation(ID,'order','Robot_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
+        tiempo = base.get_data_relation('order',ID,'machine','Robot_Lathe','TIME_MACHINE')
+        tiempo = tiempo[1][0][0]
+        nuevo_tiempo = int(tiempo) + tiempo_robot_total
+        base.update_data_relation(ID,'order','Robot_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
 
         # CNC Lathe
-    #    tiempo = base.get_data_relation('order',ID,'machine','CNC_Lathe','TIME_MACHINE')
-    #    tiempo = tiempo[1][0][0]
-    #    nuevo_tiempo = int(tiempo) + tiempo_lathe_total
-    #    base.update_data_relation(ID,'order','CNC_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
+        tiempo = base.get_data_relation('order',ID,'machine','CNC_Lathe','TIME_MACHINE')
+        tiempo = tiempo[1][0][0]
+        nuevo_tiempo = int(tiempo) + tiempo_lathe_total
+        base.update_data_relation(ID,'order','CNC_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
     
-    #return(tiempo_transcurrido,tiempo_lathe_total,tiempo_robot_total)
-    return tiempo_lathe_total
-
 #print(Run('AP2_2023_23_9_C2_H17_T30',2,'ffff','Piece1'))
 
-#Run('ffff','Piece1')
+
 
 
 

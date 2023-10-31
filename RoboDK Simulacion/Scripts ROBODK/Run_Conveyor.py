@@ -2,16 +2,10 @@ from robolink import *    # RoboDK API
 from robodk import *      # Robot toolbox
 import time
 
-# === Robot Arms Libraries ===
-    # === Torno Objects ===
-from Robot_Arms_Scripts import goHome, getPiece, pickPiece, placePiece, dropPiece
-from Station_Scripts import DoorDisplacement, TornoPuerta, FresadoPuerta, openDoor, closeDoor
-
-
 RDK = Robolink()
 
 #Set the travel of the conveyors for each iterations
-PART_TRAVEL_MM1 = 100
+PART_TRAVEL_MM1 = 105
 PART_TRAVEL_MM2 = 20
 PART_TRAVEL_MM3 = 25
 PART_TRAVEL_MM4 = 25
@@ -33,26 +27,13 @@ pick_positionASRS = 1920.0
 
 toleranceUR3 = 26
 pick_positionUR3 = 875.0
-
-# === Robot Scripts ===
-# Activar Robot Torno
-def activateRobotTorno():
-    # Calling Actions
-    PutPieceLatheProgram = RDK.Item('Put Piece Lathe')
-    GetPieceLatheProgram = RDK.Item('Get Piece Lathe')
-
-    PutPieceLatheProgram.RunProgram()
-    time.sleep(5)
-    GetPieceLatheProgram.RunProgram()
-    time.sleep(5)
-    #dropPiece(TornoGripperClose,frameConv3)
     
 
 
 def MoveConveyor2(conveyor, part_travel_mm, pieza):
+    OnPickTarget = None
     if conveyor.Valid():
         conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
-        start_time = time.time()
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[1, 3]
@@ -61,57 +42,38 @@ def MoveConveyor2(conveyor, part_travel_mm, pieza):
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
             #print(next_position)
-            if next_position > 2100:
-                break  # Sal del bucle
+            if next_position > 2050:
+                return(True)
             
-            elif abs(current_position - pick_positionASRS) < tolerance:
-                print("\n==== ESTACION TORNO ====")
-                OnPickTarget = True
-                break
-
             else:
                 # Mueve la banda
                 conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
 
-            # Calcula el tiempo transcurrido desde el inicio
-            elapsed_time = time.time() - start_time
-
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        return elapsed_time, piece_position, OnPickTarget
 
 def MoveConveyor3(conveyor, part_travel_mm, pieza):
     OnPickTarget = None
     if conveyor.Valid():
         conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
-        start_time = time.time()
         while conveyor.Valid():
             current_position = conveyor.Pose()[0, 3]  # Obtiene la posición actual del marco
             piece_position = pieza.PoseAbs()[0, 3]
-            #print("Current Position: ", current_position)
-            #print("Pieza Position: ", piece_position)
-            #print(f"Error {abs(current_position - pick_positionTorno)}")
+            print("Current Position: ", current_position)
+            print("Pieza Position: ", piece_position)
 
             # Verifica si la próxima posición excederá el límite de 2000
             next_position = current_position + part_travel_mm
             #print(next_position)
             if next_position > 2100:
-                # Si la próxima posición excede el límite, establece la posición en exactamente 2000
-                break  # Sal del bucle
+                return(True,False)
             elif abs(current_position - pick_positionTorno) < tolerance:
                 print("\n==== ESTACION TORNO ====")
                 OnPickTarget = True
-                break
+                return(False,OnPickTarget)
             else:
                 # Mueve la banda
                 conveyor.MoveJ(conveyor.Joints() + part_travel_mm)
 
-            # Calcula el tiempo transcurrido desde el inicio
-            elapsed_time = time.time() - start_time
             
-        end_time = time.time()
-        elapsed_time = end_time - start_time
-        return elapsed_time, piece_position, OnPickTarget
 
 def MoveConveyor4(conveyor, part_travel_mm, pieza):
     OnPickTarget = None
