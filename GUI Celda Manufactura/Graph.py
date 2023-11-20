@@ -40,7 +40,7 @@ class graph():
         # Relacion Orden con material
         self.relation('MATERIAL','order','material',order_id,material)
 
-        return([order_id,str(date),"",material,piece,amount,"","",'Created',""])
+        return([order_id,str(date),"",material,piece,amount,0,"",'Created',""])
 
 
     def get_data_especific(self,type,filter,name):
@@ -109,13 +109,36 @@ class graph():
         stations = [elemento[1] for elemento in lista_ordenada if isinstance(elemento[1], str)]
         return(steps,files,stations)
     
+    def exist_relation(self,type,rel,name):
+        session = self.session
+        info = session.run("MATCH ()-[r:"+str(rel)+"]->(a:"+str(type)+"{Name:'"+str(name)+"'}) RETURN COUNT(r)")
+        values = info.values()
+        return(int(values[0][0]))
+    
+    def total_time(self,name):
+        session = self.session
+        info = session.run("MATCH (a:order{Name:'"+str(name)+"'})-[r:TIME_STATION]->() RETURN r.time")
+        values = info.values()
+        suma = 0
+
+        for i in range(len(values)):
+            suma = suma + float(values[i][0])
+        return(suma)
+    
+    
     def close(self):
         # Cierra sesión con Neo4j
         session = self.session
         session.close()
         
-
 #run = graph()
+#piece_keys,piece_values = run.get_data_especific('piece','Name','Piece1')
+#print(piece_values,piece_keys[0])
+#print(run.total_time('EP1_2023_5_11_C1_H17_T18'))
+#print(run.get_data_relation('order','EP1_2023_5_11_C1_H17_T18','machine','ASRS','TIME_MACHINE'))
+#print(run.exist_relation('machine','TIME_MACHINE','Conveyor_ASRS'))
+#print(run.exist_relation('station','TIME_STATION','Station_ASRS'))
+
 #print(run.get_steps('Piece1'))
 #pieces= run.get_pieces()
 #print(pieces)
