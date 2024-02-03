@@ -18,15 +18,14 @@ class coordinator():
         base = self.base
 
         # Bring all the nodes type order with status Created
-        orders_keys,orders_values = base.get_data_especific('order','State','Running')
+        orders_keys,orders_values = base.get_data_especific('order','State','Created')
         # If we dont have orders to run, notified
         if len(orders_values) == 0:
             return([True,"Lo lamento, en este momento no hay ninguna orden para ejecutar"])
 
         # Run the steps of the order created
         for order in orders_values:
-            Run = True
-
+            
             locations = eval(order[self.Find_Index_Key(orders_keys[0],'Locations')]) # Bring Locations to ASRS                                
             ID = order[self.Find_Index_Key(orders_keys[0],'ID_Order')] 
             amount = order[self.Find_Index_Key(orders_keys[0],'Amount')]
@@ -34,55 +33,26 @@ class coordinator():
             steps,files,stations = base.get_steps(piece)
             
             # Update data
-            base.update_data(ID,'order',['Running'],['State'])
+            base.update_data(ID,'order',['Running',str(datetime.now())],['State','Update_Date'])
             dash.Modified_Row(ID,'Running','Ordenes',1,9)
-
-            # Logic for Run
-            create = 1
-            progress = [0]*len(steps) 
-     
-            while Run:
-                if progress[-1] != amount:  # correr todas las piezas en la última estacion
-                    if (create <= int(len(steps))) and (create <= int(amount)): 
-                        finish = Run_Stations.Run_Stations(ID,files[:create],locations[0],create)
-                        print(finish)
-                        if finish:
-                            for n in range(create):
-                                progress[n]=+1
-                            print(progress)
-                            create=+1
-                            locations.pop(0)
-                        else:
-                            #COMPLETAR LOGICA DE ERROR
-                            return([True,"Se presento un ERROR en la ejecución"])
-
-                    else:
-                        if progress[0] != amount:
-                            finish = Run_Stations.Run_Stations(ID,files[:len(steps)],locations[0],create)
-                            if finish:
-                                for n in range(len(progress)):
-                                    progress[n]=+1
-                                if len(locations)==0:
-                                    locations =""
-                                else:
-                                    locations.pop(0)
-                            else:
-                                #COMPLETAR LOGICA DE ERROR
-                                return([True,"Se presento un ERROR en la ejecución"])
-                        else:
-                            progress.pop(0)
-                            files.pop(0)
-                            steps.pop(0)
-                else:
-                    Run = False
-
-            # Update data
-            base.update_data(ID,'order',['Finished'],['State'])
-            dash.Modified_Row(ID,'Finished','Ordenes',1,9)
-            return("run1")
             
+            Run_Stations.Run_Stations(ID,files,locations[0],piece)
+            
+            # Update data
+            piece_keys,piece_values = base.get_data_especific('piece','Name',piece)
+            produced = piece_values[0][self.Find_Index_Key(piece_keys[0],'Produced')]
+            new_produced= int(produced) + 1
+            base.update_data(piece,'piece',[str(new_produced),str(datetime.now())],['Produced','Update_Date'])
+            
+            base.update_data(ID,'order',['Finished',str(datetime.now())],['State','Update_Date'])
+            dash.Modified_Row(ID,'Finished','Ordenes',1,9) # Status
+            dash.Modified_Row(ID,str(datetime.now()),'Ordenes',1,3) # Fecha fin
 
-            # INSERTA LOGICA DE BOTON APAGADO
+            total_time = base.total_time(ID)
+            dash.Modified_Row(ID,total_time,'Ordenes',1,8) # Tiempo total
+            return([True,"Celda ejecutada exitosamente"])
+
+            
 
     def get_orders(self): # Show all the orders
         base = self.base
@@ -364,7 +334,6 @@ class coordinator():
         
     
 #run = coordinator()
-
 #print(run.Start_Process())
 #print(run.get_ID())
 #print(run.information_order('AP1_2023_30_8_C5_H11_T33'))

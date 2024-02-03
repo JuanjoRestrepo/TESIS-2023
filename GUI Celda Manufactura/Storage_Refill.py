@@ -13,5 +13,3 @@ def Storage():
     for i in range(num):
         pieza = RDK.Item('piece')
         pieza.Delete()
-
-Storage()

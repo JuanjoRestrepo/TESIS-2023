@@ -30,7 +30,7 @@ def dropPiece(robotTool, drop_frame):
     detached_object.setParentStatic(drop_frame)
 
 # DEFINE THE LOGIC TO GET A PIECE
-def Get_Piece(Up,Piece,RDK,num,ID):
+def Get_Piece(Up,Piece,RDK,ID):
     #Connect to ASRS Robot
     velocidad = 100
     robot = RDK.Item('ASRS')
@@ -83,19 +83,30 @@ def Get_Piece(Up,Piece,RDK,num,ID):
 
     # Actualización de la base y dashboard
     dash.Add_End(['ASRS',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones Máquinas')
-   
-    if num == 1:
+    station = base.exist_relation('station','TIME_STATION','Station_ASRS')
+    machine = base.exist_relation('machine','TIME_MACHINE','ASRS')
+
+    if station == 0:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_ASRS')
     else:
         tiempo = base.get_data_relation('order',ID,'station','Station_ASRS','TIME_STATION')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_transcurrido
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
         base.update_data_relation(ID,'order','Station_ASRS','station',nuevo_tiempo,'TIME_STATION','time')
+
+    if machine == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_transcurrido),'order','machine',ID,'ASRS')
+    else:
+        # Machine ASRS
+        tiempo = base.get_data_relation('order',ID,'machine','ASRS','TIME_MACHINE')
+        tiempo = tiempo[1][0][0]
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
+        base.update_data_relation(ID,'order','ASRS','machine',nuevo_tiempo,'TIME_MACHINE','time')
 
     return()
 
 # DEFINE THE LOGIC TO PUT A PIECE
-def Put_Piece(Down,Piece,RDK,num,ID):
+def Put_Piece(Down,Piece,RDK,ID):
     #Connect to ASRS Robot
     velocidad = 100
     robot = RDK.Item('ASRS')
@@ -144,165 +155,175 @@ def Put_Piece(Down,Piece,RDK,num,ID):
 
     # Actualización de la base y dashboard
     dash.Add_End(['ASRS',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones Máquinas')
-   
-    if num == 1:
+    station = base.exist_relation('station','TIME_STATION','Station_ASRS')
+    machine = base.exist_relation('machine','TIME_MACHINE','ASRS')
+
+    if station == 0:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_ASRS')
     else:
         tiempo = base.get_data_relation('order',ID,'station','Station_ASRS','TIME_STATION')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_transcurrido
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
         base.update_data_relation(ID,'order','Station_ASRS','station',nuevo_tiempo,'TIME_STATION','time')
-
+        
+    if machine == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_transcurrido),'order','machine',ID,'ASRS')
+    else:
+        # Machine ASRS
+        tiempo = base.get_data_relation('order',ID,'machine','ASRS','TIME_MACHINE')
+        tiempo = tiempo[1][0][0]
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
+        base.update_data_relation(ID,'order','ASRS','machine',nuevo_tiempo,'TIME_MACHINE','time')
     return()
 
 # THE MAIN PROCESS ( WE SEND THE TARGETS INFORMATION OF THE PIECE)
-def Run(ID,loc,action,num):
+def Run(ID,loc,action):
     # Connect to DK
     RDK = Robolink() 
 
-    if loc == '[1,1]':
+    if loc == [1,1]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[1,1]')
         Piece_Get = RDK.Item('Piece_AC[1,1]')
         Piece_Put = RDK.Item('PiecePutAC[1,1]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[1,2]':
+    elif loc == [1,2]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[1,2]')
         Piece_Get = RDK.Item('Piece_AC[1,2]')
         Piece_Put = RDK.Item('PiecePutAC[1,2]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[1,3]':
+    elif loc == [1,3]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[1,3]')
         Piece_Get = RDK.Item('Piece_EC[1,3]')
         Piece_Put = RDK.Item('PiecePutEC[1,3]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[1,4]':
+    elif loc == [1,4]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[1,4]')
         Piece_Get = RDK.Item('Piece_EC[1,4]')
         Piece_Put = RDK.Item('PiecePutEC[1,4]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[1,5]':
+    elif loc == [1,5]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[1,5]')
         Piece_Get = RDK.Item('Piece_EC[1,5]')
         Piece_Put = RDK.Item('PiecePutEC[1,5]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
 
-    elif loc == '[2,1]':
+    elif loc == [2,1]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[2,1]')
         Piece_Get = RDK.Item('Piece_AC[2,1]')
         Piece_Put = RDK.Item('PiecePutAC[2,1]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[2,2]':
+    elif loc == [2,2]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[2,2]')
         Piece_Get = RDK.Item('Piece_AC[2,2]')
         Piece_Put = RDK.Item('PiecePutAC[2,2]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[2,3]':
+    elif loc == [2,3]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[2,3]')
         Piece_Get = RDK.Item('Piece_EC[2,3]')
         Piece_Put = RDK.Item('PiecePutEC[2,3]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[2,4]':
+    elif loc == [2,4]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[2,4]')
         Piece_Get = RDK.Item('Piece_EC[2,4]')
         Piece_Put = RDK.Item('PiecePutEC[2,4]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[2,5]':
+    elif loc == [2,5]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[2,5]')
         Piece_Get = RDK.Item('Piece_EC[2,5]')
         Piece_Put = RDK.Item('PiecePutEC[2,5]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
 
-    elif loc == '[3,1]':
+    elif loc == [3,1]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[3,1]')
         Piece_Get = RDK.Item('Piece_AC[3,1]')
         Piece_Put = RDK.Item('PiecePutAC[3,1]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[3,2]':
+    elif loc == [3,2]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[3,2]')
         Piece_Get = RDK.Item('Piece_AC[3,2]')
         Piece_Put = RDK.Item('PiecePutAC[3,2]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[3,3]':
+    elif loc == [3,3]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[3,3]')
         Piece_Get = RDK.Item('Piece_EC[3,3]')
         Piece_Put = RDK.Item('PiecePutEC[3,3]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[3,4]':
+    elif loc == [3,4]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[3,4]')
         Piece_Get = RDK.Item('Piece_EC[3,4]')
         Piece_Put = RDK.Item('PiecePutEC[3,4]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[3,5]':
+    elif loc == [3,5]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[3,5]')
         Piece_Get = RDK.Item('Piece_EC[3,5]')
         Piece_Put = RDK.Item('PiecePutEC[3,5]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
 
-    elif loc == '[4,1]':
+    elif loc == [4,1]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[4,1]')
         Piece_Get = RDK.Item('Piece_AC[4,1]')
         Piece_Put = RDK.Item('PiecePutAC[4,1]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[4,2]':
+    elif loc == [4,2]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[4,2]')
         Piece_Get = RDK.Item('Piece_AC[4,2]')
         Piece_Put = RDK.Item('PiecePutAC[4,2]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[4,3]':
+    elif loc == [4,3]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[4,3]')
         Piece_Get = RDK.Item('Piece_EC[4,3]')
         Piece_Put = RDK.Item('PiecePutEC[4,3]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[4,4]':
+    elif loc == [4,4]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[4,4]')
         Piece_Get = RDK.Item('Piece_EC[4,4]')
         Piece_Put = RDK.Item('PiecePutEC[4,4]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[4,5]':
+    elif loc == [4,5]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[4,5]')
         Piece_Get = RDK.Item('Piece_EC[4,5]')
         Piece_Put = RDK.Item('PiecePutEC[4,5]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
 
-    elif loc == '[5,1]':
+    elif loc == [5,1]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[5,1]')
         Piece_Get = RDK.Item('Piece_AC[5,1]')
         Piece_Put = RDK.Item('PiecePutAC[5,1]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[5,2]':
+    elif loc == [5,2]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_AC[5,2]')
         Piece_Get = RDK.Item('Piece_AC[5,2]')
         Piece_Put = RDK.Item('PiecePutAC[5,2]')
         Up_Piece_Put = RDK.Item('UpPut_AC')
-    elif loc == '[5,3]':
+    elif loc == [5,3]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[5,3]')
         Piece_Get = RDK.Item('Piece_EC[5,3]')
         Piece_Put = RDK.Item('PiecePutEC[5,3]')
         Up_Piece_Put = RDK.Item('UpPut_EC')
-    elif loc == '[5,4]':
+    elif loc == [5,4]:
         # Obtener el objeto del objetivo
         Up_Piece = RDK.Item('Up_EC[5,4]')
         Piece_Get = RDK.Item('Piece_EC[5,4]')
@@ -316,14 +337,10 @@ def Run(ID,loc,action,num):
         Up_Piece_Put = RDK.Item('UpPut_EC')
 
     if action == 'Get':
-        Get_Piece(Up_Piece,Piece_Get,RDK,num,ID)
+        Get_Piece(Up_Piece,Piece_Get,RDK,ID)
 
     else:
-        Put_Piece(Up_Piece_Put,Piece_Put,RDK,num,ID)
+        Put_Piece(Up_Piece_Put,Piece_Put,RDK,ID)
     return()
 
-#Run('AP2_2023_23_9_C2_H17_T30','[1,3]','Put',2)
-
-
-
-
+#Run('EP1_2023_23_10_C2_H10_T7','[1,3]','Get',1)

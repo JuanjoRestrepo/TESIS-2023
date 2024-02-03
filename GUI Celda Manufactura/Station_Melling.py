@@ -27,7 +27,7 @@ def dropPiece(robotTool, drop_frame):
     # Establece "Frame_Conv3" como el padre del objeto previamente adjunto
     detached_object.setParentStatic(drop_frame)
 
-def Run(ID,num):
+def Run(ID):
     # Conectar a RoboDK
     RDK = Robolink()
     dash = Dashboard.dashboard()
@@ -135,36 +135,38 @@ def Run(ID,num):
     # Actualización de la base y dashboard
     dash.Add_End(['Robot Mitsubishi Melling',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones Máquinas')
     dash.Add_End(['CNC Melling',str(datetime.now()),tiempo_melling_total,ID,'Exitoso'],'Ejecuciones Máquinas')
+    station = base.exist_relation('station','TIME_STATION','Station_Melling')
+    machine = base.exist_relation('machine','TIME_MACHINE','Robot_Melling')
+    machine2 = base.exist_relation('machine','TIME_MACHINE','CNC_Melling')
 
-    if num == 1:
-        # Station
+    # Station
+    if station == 0:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_Melling')
-
-        # Robot Lathe
-        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_robot_total),'order','machine',ID,'Robot_Melling')
-
-        # CNC Lathe
-        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_melling_total),'order','machine',ID,'CNC_Melling')
     else:
-        # Station
         tiempo = base.get_data_relation('order',ID,'station','Station_Melling','TIME_STATION')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_transcurrido
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
         base.update_data_relation(ID,'order','Station_Melling','station',nuevo_tiempo,'TIME_STATION','time')
 
-        # Robot Lathe
+    # Robot Melling
+    if machine == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_robot_total),'order','machine',ID,'Robot_Melling')
+    else:
         tiempo = base.get_data_relation('order',ID,'machine','Robot_Melling','TIME_MACHINE')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_robot_total
+        nuevo_tiempo = float(tiempo) + tiempo_robot_total
         base.update_data_relation(ID,'order','Robot_Melling','machine',nuevo_tiempo,'TIME_MACHINE','time')
 
-        # CNC Lathe
+    # CNC Melling
+    if machine2 == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_melling_total),'order','machine',ID,'CNC_Melling')
+    else:
         tiempo = base.get_data_relation('order',ID,'machine','CNC_Melling','TIME_MACHINE')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_melling_total
+        nuevo_tiempo = float(tiempo) + tiempo_melling_total
         base.update_data_relation(ID,'order','CNC_Melling','machine',nuevo_tiempo,'TIME_MACHINE','time')
-    
-    return(tiempo_transcurrido,tiempo_melling_total,tiempo_robot_total)
+        
+    return()
     
 
 #print(Run('AP2_2023_23_9_C2_H17_T30',1))

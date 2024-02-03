@@ -521,9 +521,10 @@ class Application(tk.Frame):
         base = self.base
         import Storage_Refill
 
-        confirm = messagebox.askyesno("Confirmación", "¿Estás seguro de que quieres eliminar esta orden?")
+        confirm = messagebox.askyesno("Confirmación", "¿Estás seguro de que quieres reabastecer el almacén?")
 
         if confirm:
+            Storage_Refill.Storage()
             available_E = '15'
             available_A = '10'
             locations_E = '[[1,3],[1,4],[1,5],[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,3],[4,4],[4,5],[5,3],[5,4],[5,5]]'
@@ -600,7 +601,27 @@ class Application(tk.Frame):
         self.master.deiconify()  # Mostrar la pantalla principal
 
     def run(self):
-        pass
+        # Lógica para modificar almacen
+        coordinator = self.coordinator
+        base = self.base
+        confirm = messagebox.askyesno("Confirmación", "¿Estás seguro de que quieres ejecutar la celda?")
+
+        if confirm:
+            finish,text = coordinator.Start_Process()
+            if finish:
+                self.master.withdraw()
+                mensaje_message = tk.Toplevel(self)
+                width = mensaje_message.winfo_screenwidth()
+                height = mensaje_message.winfo_screenheight()
+                x = (width - 200) // 2
+                y = (height - 100) // 2
+                mensaje_message.geometry("600x100+{}+{}".format(x, y))
+                mensaje_message.title("MENSAJE")
+                mensaje_message_label = tk.Label(mensaje_message, text=text)
+                mensaje_message_label.pack(side="top", pady=5)
+                mensaje_message_button = tk.Button(mensaje_message, text="Aceptar", command=lambda:[mensaje_message.destroy(),self.go_to_main_screen()])
+                mensaje_message_button.pack(side="bottom", pady=10)
+
 
     def stop(self):
         pass

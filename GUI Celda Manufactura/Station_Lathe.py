@@ -28,9 +28,66 @@ def dropPiece(robotTool, drop_frame):
     # Establece "Frame_Conv3" como el padre del objeto previamente adjunto
     detached_object.setParentStatic(drop_frame)
 
-def create_Piece(RDK,piece,new_piece):
+def find_piece(loc):
+    if loc == [1,1]:
+        return('[1,1]')
+    elif loc == [1,2]:
+        return('[1,2]')
+    elif loc == [1,3]:
+        return('[1,3]')
+    elif loc == [1,4]:
+        return('[1,4]')
+    elif loc == [1,5]:
+        return('[1,5]')
+
+    elif loc == [2,1]:
+        return('[2,1]')
+    elif loc == [2,2]:
+        return('[2,2]')
+    elif loc == [2,3]:
+        return('[2,3]')
+    elif loc == [2,4]:
+        return('[2,4]')
+    elif loc == [2,5]:
+        return('[2,5]')
+
+    elif loc == [3,1]:
+        return('[3,1]')
+    elif loc == [3,2]:
+        return('[3,2]')
+    elif loc == [3,3]:
+        return('[3,3]')
+    elif loc == [3,4]:
+        return('[3,4]')
+    elif loc == [3,5]:
+        return('[3,5]')
+
+    elif loc == [4,1]:
+        return('[4,1]')
+    elif loc == [4,2]:
+        return('[4,2]')
+    elif loc == [4,3]:
+        return('[4,3]')
+    elif loc == [4,4]:
+        return('[4,4]')
+    elif loc == [4,5]:
+        return('[4,4]')
+
+    elif loc == [5,1]:
+        return('[5,1]')
+    elif loc == [5,2]:
+        return('[5,2]')
+    elif loc == [5,3]:
+        return('[5,3]')
+    elif loc == [5,4]:
+        return('[5,4]')
+    else:
+        return('[5,5]')
+
+def create_Piece(RDK,loc,new_piece):
     world = RDK.Item('World',itemtype=ITEM_TYPE_FRAME)
     pieza_original = RDK.Item(new_piece)
+    piece = find_piece(loc)
     pieza_vieja = RDK.Item(piece)
     lathe= RDK.Item('Mazak Lathe Base torno')
 
@@ -48,7 +105,7 @@ def create_Piece(RDK,piece,new_piece):
     return()
 
 
-def Run(ID,num,loc,piece):
+def Run(ID,loc,piece):
     # Conectar a RoboDK
     RDK = Robolink()
     dash = Dashboard.dashboard()
@@ -107,10 +164,9 @@ def Run(ID,num,loc,piece):
         tiempo_robot = time.time()
         robot.MoveJ(Step3)
         frame = RDK.Item('Mazak Lathe Base torno')
+        dropPiece(tool, frame)
         gripper('O',RDK)
         robot.setSpeed(velocidad)
-        dropPiece(tool, frame)
-        dropPiece(tool, frame)
         robot.MoveJ(Step2)
         tiempo_robot2 = time.time()
         tiempo_robot_total = (tiempo_robot2 - tiempo_robot) + tiempo_robot_total
@@ -162,38 +218,36 @@ def Run(ID,num,loc,piece):
     # Actualización de la base y dashboard
     dash.Add_End(['Robot Mitsubishi Torno',str(datetime.now()),tiempo_robot_total,ID,'Exitoso'],'Ejecuciones Máquinas')
     dash.Add_End(['CNC Torno',str(datetime.now()),tiempo_lathe_total,ID,'Exitoso'],'Ejecuciones Máquinas')
+    station = base.exist_relation('station','TIME_STATION','Station_Lathe')
+    machine = base.exist_relation('machine','TIME_MACHINE','Robot_Lathe')
+    machine2 = base.exist_relation('machine','TIME_MACHINE','CNC_Lathe')
 
-    if num == 1:
-        # Station
+    # Station
+    if station == 0:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_Lathe')
-
-        # Robot Lathe
-        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_robot_total),'order','machine',ID,'Robot_Lathe')
-
-        # CNC Lathe
-        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_lathe_total),'order','machine',ID,'CNC_Lathe')
     else:
-        # Station
         tiempo = base.get_data_relation('order',ID,'station','Station_Lathe','TIME_STATION')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_transcurrido
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
         base.update_data_relation(ID,'order','Station_Lathe','station',nuevo_tiempo,'TIME_STATION','time')
-
-        # Robot Lathe
+    
+    # Robot Lathe
+    if machine == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_robot_total),'order','machine',ID,'Robot_Lathe')
+    else:
         tiempo = base.get_data_relation('order',ID,'machine','Robot_Lathe','TIME_MACHINE')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_robot_total
+        nuevo_tiempo = float(tiempo) + tiempo_robot_total
         base.update_data_relation(ID,'order','Robot_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
-
-        # CNC Lathe
+    
+    # CNC Lathe
+    if machine2 == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_lathe_total),'order','machine',ID,'CNC_Lathe')
+    else:
         tiempo = base.get_data_relation('order',ID,'machine','CNC_Lathe','TIME_MACHINE')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_lathe_total
+        nuevo_tiempo = float(tiempo) + tiempo_lathe_total
         base.update_data_relation(ID,'order','CNC_Lathe','machine',nuevo_tiempo,'TIME_MACHINE','time')
+    return()
     
 #print(Run('AP2_2023_23_9_C2_H17_T30',2,'ffff','Piece1'))
-
-
-
-
-

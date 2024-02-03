@@ -27,8 +27,7 @@ def dropPiece(robotTool, drop_frame):
     # Establece "Frame_Conv3" como el padre del objeto previamente adjunto
     detached_object.setParentStatic(drop_frame)
 
-
-def Run (ID,num):
+def Run (ID):
     # Conectar a RoboDK
     RDK = Robolink()
     dash = Dashboard.dashboard()
@@ -82,7 +81,7 @@ def Run (ID,num):
         robot.MoveL(Step2)
         robot.MoveL(Step3)
         robot.MoveL(Step4)
-        robot.MoveJ(Step5)
+        robot.MoveL(Step5)
         robot.MoveL(Step4)
         robot.MoveL(Step3)
         robot.MoveL(Step2)
@@ -109,13 +108,24 @@ def Run (ID,num):
 
     # Actualización de la base y dashboard
     dash.Add_End(['Robot UR3',str(datetime.now()),tiempo_transcurrido,ID,'Exitoso'],'Ejecuciones Máquinas')
-   
-    if num == 1:
+    station = base.exist_relation('station','TIME_STATION','Station_Inspection')
+    machine = base.exist_relation('machine','TIME_MACHINE','Robot_UR3')
+
+    if station == 0:
         base.create_relation_data('TIME_STATION',"time:"+str(tiempo_transcurrido),'order','station',ID,'Station_Inspection')
     else:
         tiempo = base.get_data_relation('order',ID,'station','Station_Inspection','TIME_STATION')
         tiempo = tiempo[1][0][0]
-        nuevo_tiempo = int(tiempo) + tiempo_transcurrido
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
         base.update_data_relation(ID,'order','Station_Inspection','station',nuevo_tiempo,'TIME_STATION','time')
+
+    if machine == 0:
+        base.create_relation_data('TIME_MACHINE',"time:"+str(tiempo_transcurrido),'order','machine',ID,'Robot_UR3')
+    else:
+        tiempo = base.get_data_relation('order',ID,'machine','Robot_UR3','TIME_MACHINE')
+        tiempo = tiempo[1][0][0]
+        nuevo_tiempo = float(tiempo) + tiempo_transcurrido
+        base.update_data_relation(ID,'order','Robot_UR3','machine',nuevo_tiempo,'TIME_MACHINE','time')
+    return()
 
 #Run('AP2_2023_23_9_C2_H17_T30',2)
